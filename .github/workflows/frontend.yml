@@ -1,0 +1,29 @@
+name: Frontend CI
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'frontend/*'
+
+env:
+  node-version: '14.x'
+defaults:
+  run:
+    working-directory: ./frontend
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2.4.0
+      - name: Setup Node ${{env.node-version}}
+        uses: actions/setup-node@v2.4.1
+        with:
+          node-version: ${{env.node-version}}
+      - name: Install node packages
+        run: |
+          npm install
+      - name: LINT - Ensure Code Quality
+        run: |
+          npm run lint

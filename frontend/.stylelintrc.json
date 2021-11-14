@@ -1,0 +1,12 @@
+{
+  "rules": {
+    "font-family-no-duplicate-names": true,
+    "unit-no-unknown": true,
+    "property-no-unknown": true,
+    "color-no-invalid-hex": true,
+    "comment-no-empty": true,
+    "no-extra-semicolons": true,
+    "no-duplicate-at-import-rules": true,
+    "indentation": 2
+  }
+}
