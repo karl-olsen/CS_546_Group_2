@@ -1,0 +1,16 @@
+{
+  "name": "ez-el_backend",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Ez-el is a lightweight course management solution for students and professors! This project is dedicated to Group 2's CS-546-WS Web Programming Final Project.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1",
+    "nodemon": "^2.0.15"
+  }
+}
