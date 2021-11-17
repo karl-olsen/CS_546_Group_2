@@ -1,6 +1,6 @@
 const constructorMethod = (app) => {
   app.get('/', (req, res) => {
-    res.send('ok');
+    res.status(200).json({ test: 'hello world' });
   });
 
   app.use('*', (req, res) => {
