@@ -11,6 +11,8 @@ async function createCourse(courseName, teacherIds) {
   const newCourse = {
     name: courseName,
     teachers: teacherIds,
+    students: [],
+    assignments: [],
   };
 
   const insert = await coursesCollection.insertOne(newCourse);

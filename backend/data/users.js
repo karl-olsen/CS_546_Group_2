@@ -5,7 +5,7 @@ const bcrypt = require('bcrypt');
 
 async function doesEmailExist(email) {
   const usersCollection = await users();
-  const user = await userCollection.findOne({ email: email });
+  const user = await usersCollection.findOne({ email: email });
   if (!user) return false;
   return true;
 }
@@ -36,6 +36,7 @@ async function createUser(firstName, lastName, email, password, role) {
     email: parsedEmail,
     password: hashedPassword,
     role: parsedRole,
+    classes: [],
   };
 
   const insert = await usersCollection.insertOne(newUser);
