@@ -56,7 +56,7 @@ const validRole = (role) => {
 
   const parsed = role.toLowerCase().trim();
 
-  if (parsed !== 'student' || parsed !== 'teacher') throw new Error("Roles must be 'student' or 'teacher' only.");
+  if (parsed !== 'student' && parsed !== 'teacher') throw new Error("Roles must be 'student' or 'teacher' only.");
 };
 
 const validDate = (dateString) => {
