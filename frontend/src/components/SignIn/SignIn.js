@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useState } from "react"
 const axios = require('axios')
 
 const SignIn = () => {
@@ -8,7 +8,7 @@ const SignIn = () => {
     const authenticate = async (e) => {
         e.preventDefault()
         try {
-            await axios.post('localhost:3001/login', {
+            await axios.post('http://localhost:3001/login', {
                 email,
                 password
             })
