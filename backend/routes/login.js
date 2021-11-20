@@ -1,4 +1,4 @@
-import env from '../env'
+const env = require('../env')
 const jwt = require('jsonwebtoken')
 const express = require('express')
 const router = express.Router()

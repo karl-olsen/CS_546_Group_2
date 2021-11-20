@@ -1,4 +1,5 @@
 import { useState } from "react"
+import env from "../../env"
 const axios = require('axios')
 
 const SignIn = () => {
@@ -8,7 +9,7 @@ const SignIn = () => {
     const authenticate = async (e) => {
         e.preventDefault()
         try {
-            await axios.post('http://localhost:3001/login', {
+            await axios.post(`${env.apiUrl}/login`, {
                 email,
                 password
             })
