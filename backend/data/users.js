@@ -61,6 +61,12 @@ async function checkUser(email, password) {
   return { authenticated: true };
 }
 
+// const main = async () => {
+//   await createUser('Christian', 'Paz', 'cszablewskipaz@gmail.com', 'password123', 'teacher')
+// }
+
+// main()
+
 module.exports = {
   createUser,
   checkUser,
