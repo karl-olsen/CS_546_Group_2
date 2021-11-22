@@ -1,5 +1,6 @@
 const env = require('../env')
 const jwt = require('jsonwebtoken')
+const auth = require('../middleware/auth')
 const express = require('express')
 const router = express.Router()
 const courseData = require('../data/courses')
@@ -18,7 +19,8 @@ async function getRole(userId)  {
     return user.role;
 }
 
-router.get('/', async (req, res) => {
+//Route to get all courses the user is enrolled in or teaching
+router.get('/', auth, async (req, res) => {
     //should NOT need to check role - can be accessed equally by Students and Teachers
 
     const { userId } = req.body
@@ -35,7 +37,7 @@ router.get('/', async (req, res) => {
 });
 
 //Route to create new course when given a Course Name and array of Teacher IDs
-router.post('/', async (req, res) => {
+router.post('/', auth, async (req, res) => {
     
     const { userId, courseName, teacherIds } = req.body
 
@@ -55,16 +57,17 @@ router.post('/', async (req, res) => {
     }
 });
 
-router.patch('/', async (req, res) => {
-    const { courseId, teacherId } = req.body
+//Route for a teacher to add themselves as a teacher for a given course
+router.patch('/', auth, async (req, res) => {
+    const {  userId, courseId } = req.body
 
-    let role = await getRole(teacherId);
+    let role = await getRole(userId);
 
     try {
-        if(role.toLowerCase() !== 'teacher') throw 'Teacherss can ONLY be added to courses by users with Teacher role!';
+        if(role.toLowerCase() !== 'teacher') throw 'Teachers can ONLY be added to courses if they have the teacher role!';
 
-        let courseName = await courseData.addTeacher(courseId, teacherId);
-        let teacherName = await userData.addCourse(courseId, teacherId);
+        let courseName = await courseData.addTeacher(courseId, userId);
+        let teacherName = await userData.addCourse(courseId, userId);
 
         res.sendStatus(200);
         console.log(teacherName + ' has been added to teach ' + courseName + '!');

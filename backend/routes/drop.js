@@ -1,5 +1,6 @@
 const env = require('../env')
 const jwt = require('jsonwebtoken')
+const auth = require('../middleware/auth')
 const express = require('express')
 const router = express.Router()
 const courseData = require('../data/courses')
@@ -18,17 +19,18 @@ async function getRole(userId)  {
     return user.role;
 }
 
-router.post('/', async (req, res) => {
+router.post('/', auth, async (req, res) => {
     const { userId, courseId } = req.body
 
     let role = await getRole(userId);
+    let courseName = "";
 
     try {
         if(role.toLowerCase() == 'student')   {
-            let courseName = await courseData.removeStudent(courseId, userId);
+            courseName = await courseData.removeStudent(courseId, userId);
         }
         else {//user is a teacher
-            let courseName = await courseData.removeTeacher(courseId, userId);
+            courseName = await courseData.removeTeacher(courseId, userId);
         }
         
         let userName = await userData.drop(courseId, userId);

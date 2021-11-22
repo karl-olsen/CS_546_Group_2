@@ -20,15 +20,15 @@ async function getRole(userId)  {
 }
 
 router.post('/', auth, async (req, res) => {
-    const { studentId, courseId } = req.body
+    const { userId, courseId } = req.body
 
     try {
-        let role = await getRole(studentId);
+        let role = await getRole(userId);
         if(role.toLowerCase() !== 'student') throw 'Course enrollment can ONLY be called by users with Student role!';
         
         //update the relevant info in the Course and User collections, respectively
-        let courseName = await courseData.addStudent(courseId, studentId);
-        let studentName = await userData.enroll(courseId, studentId);
+        let courseName = await courseData.addStudent(courseId, userId);
+        let studentName = await userData.enroll(courseId, userId);
 
         res.sendStatus(200);
         console.log(studentName + ' has enrolled in ' + courseName + '!');
