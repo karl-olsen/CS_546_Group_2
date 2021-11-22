@@ -3,6 +3,7 @@ const cors = require('cors');
 const env = require('./env');
 const cookieParser = require('cookie-parser');
 const app = express();
+const seedData = require('../backend/tasks/seed');
 
 const corsOptions = {
   // all network requests allowed from the frontend URL only
