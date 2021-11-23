@@ -48,7 +48,12 @@ router.post('/', auth, async (req, res) => {
 
         await courseData.createCourse(courseName, teacherIds);
 
-        res.sendStatus(200);
+        const newCourse = {
+            added: true,
+            courseName: courseName
+        };
+        res.status(200).json(newCourse);
+
         console.log('Course ' + courseName + ' has been added with teacher ID: ' + teacherIds + '!');
         return;
     } catch(e) {
@@ -69,7 +74,7 @@ router.patch('/', auth, async (req, res) => {
         let courseName = await courseData.addTeacher(courseId, userId);
         let teacherName = await userData.addCourse(courseId, userId);
 
-        res.sendStatus(200);
+        res.status(200).json({added: true});
         console.log(teacherName + ' has been added to teach ' + courseName + '!');
     } catch(e) {
         console.log(e);

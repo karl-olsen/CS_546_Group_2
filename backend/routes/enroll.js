@@ -30,7 +30,13 @@ router.post('/', auth, async (req, res) => {
         let courseName = await courseData.addStudent(courseId, userId);
         let studentName = await userData.enroll(courseId, userId);
 
-        res.sendStatus(200);
+        const newEnroll = {
+            enrolled: true,
+            studentName: studentName,
+            courseName: courseName
+        };
+        
+        res.status(200).json(newEnroll);
         console.log(studentName + ' has enrolled in ' + courseName + '!');
         return;
     } catch(e) {

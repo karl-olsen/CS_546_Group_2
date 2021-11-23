@@ -191,7 +191,7 @@ async function drop(courseId, userId) {
   //find the course in the user's "classes" array
   for(let course of tempUser.classes)  {
     //once the course has been found
-    if(course._id == courseId)  {
+    if(course._id === courseId)  {
       found = true;
       //edge case: user is dropping the only class they're enrolled in 
       if(tempUser.classes.length == 1)
@@ -237,7 +237,7 @@ async function getCourses(userId)  {
   let tempUser = await userCollection.findOne({ _id: objId });
 
   //the above call will result in null if the given ID doesn't exist in the database
-  if(tempUser === null) throw 'User with that ID is not in database!';
+  if(!tempUser) throw 'User with that ID is not in database!';
 
   //retrieve course collection
   const courseCollection = await courses();
@@ -255,7 +255,8 @@ async function getCourses(userId)  {
     let foundCourse = await courseCollection.findOne({ _id: courseObjId });
 
     //the above call will result in null if the given ID doesn't exist in the respective database
-    if(foundCourse === null) throw 'Student has a course whose ID is not in the course database!';
+    if(!foundCourse) throw 'Student has a course whose ID is not in the course database!';
+
     courseList.push(foundCourse.name);
   }
 
