@@ -6,6 +6,7 @@ const bcrypt = require('bcrypt');
 let { ObjectId } = require('mongodb');
 
 async function doesEmailExist(email) {
+  error.str(email);
   const usersCollection = await users();
   const user = await usersCollection.findOne({ email: email });
   if (!user) return false;
@@ -13,6 +14,7 @@ async function doesEmailExist(email) {
 }
 
 async function hashPassword(plaintext) {
+  error.str(plaintext);
   const saltRounds = 16;
   return await bcrypt.hash(plaintext, saltRounds);
 }
@@ -63,8 +65,7 @@ async function checkUser(email, password) {
   return { authenticated: true };
 }
 
-
-//Note: Takes in courseId and studentId as strings. 
+//Note: Takes in courseId and studentId as strings.
 async function enroll(courseId, studentId) {
   //error check inputs
   error.str(courseId);
@@ -74,7 +75,7 @@ async function enroll(courseId, studentId) {
   const userCollection = await users();
 
   //check if the provided studentId is a valid ObjectId
-  if(!ObjectId.isValid(studentId)) throw 'Provided ID not proper format for ObjectID!';
+  if (!ObjectId.isValid(studentId)) throw 'Provided ID not proper format for ObjectID!';
   //convert the ID string to an ObjectID
   let objId = ObjectId(studentId);
 
@@ -82,39 +83,35 @@ async function enroll(courseId, studentId) {
   let tempStudent = await userCollection.findOne({ _id: objId });
 
   //the above call will result in null if the given ID doesn't exist in the database
-  if(tempStudent === null) throw 'User with that ID is not in database!';
+  if (tempStudent === null) throw 'User with that ID is not in database!';
 
   //if the student is already enrolled in the respective course, throw an error
   //NOTE: Shouldn't be necessary, as courses.js' addStudent() function SHOULD catch this case and throw an error first, but including just in case
-  for(let course of tempStudent.classes)  {
-    if(course._id == courseId)  throw 'Student is already enrolled in that course!';
+  for (let course of tempStudent.classes) {
+    if (course._id == courseId) throw 'Student is already enrolled in that course!';
   }
 
   //create new class Object to be added to the student's "classes" array
   const classInfo = {
     _id: courseId,
-    grades : [],
-    overallGrade: 0
+    grades: [],
+    overallGrade: 0,
   };
 
   //push the new class Object to the tempStudent's classes array
   tempStudent.classes.push(classInfo);
 
   //"push" the updated course info to the same ID in the database
-  const updatedInfo = await userCollection.updateOne(
-      {_id: objId},
-      { $set: tempStudent}
-  );
+  const updatedInfo = await userCollection.updateOne({ _id: objId }, { $set: tempStudent });
 
   //check that the update succeeded
   if (updatedInfo.modifiedCount === 0) throw 'Failed to add course!';
 
-
   //upon successful add, return the name of the student for output
-  return tempStudent.firstName + " " + tempStudent.lastName;
+  return tempStudent.firstName + ' ' + tempStudent.lastName;
 }
 
-//Note: Takes in courseId and studentId as strings. 
+//Note: Takes in courseId and studentId as strings.
 //NOTE: This is the function to add a course to a *TEACHER*
 async function addCourse(courseId, teacherId) {
   //error check inputs
@@ -125,7 +122,7 @@ async function addCourse(courseId, teacherId) {
   const userCollection = await users();
 
   //check if the provided teacherId is a valid ObjectId
-  if(!ObjectId.isValid(teacherId)) throw 'Provided ID not proper format for ObjectID!';
+  if (!ObjectId.isValid(teacherId)) throw 'Provided ID not proper format for ObjectID!';
   //convert the ID string to an ObjectID
   let objId = ObjectId(teacherId);
 
@@ -133,36 +130,32 @@ async function addCourse(courseId, teacherId) {
   let tempTeacher = await userCollection.findOne({ _id: objId });
 
   //the above call will result in null if the given ID doesn't exist in the database
-  if(tempTeacher === null) throw 'User with that ID is not in database!';
+  if (tempTeacher === null) throw 'User with that ID is not in database!';
 
   //if the teacher is already teaching the respective course, throw an error
-  for(let course of tempTeacher.classes)  {
-    if(course._id == courseId)  throw 'Teacher is already teaching that course!';
+  for (let course of tempTeacher.classes) {
+    if (course._id == courseId) throw 'Teacher is already teaching that course!';
   }
 
   //create new class Object to be added to the teacher's "classes" array
   const classInfo = {
-    _id: courseId
+    _id: courseId,
   };
 
   //push the new class Object to the tempTeacher's classes array
   tempTeacher.classes.push(classInfo);
 
   //"push" the updated course info to the same ID in the database
-  const updatedInfo = await userCollection.updateOne(
-      {_id: objId},
-      { $set: tempTeacher}
-  );
+  const updatedInfo = await userCollection.updateOne({ _id: objId }, { $set: tempTeacher });
 
   //check that the update succeeded
   if (updatedInfo.modifiedCount === 0) throw 'Failed to add course to teacher!';
 
-
   //upon successful add, return the name of the teacher for output
-  return tempTeacher.firstName + " " + tempTeacher.lastName;
+  return tempTeacher.firstName + ' ' + tempTeacher.lastName;
 }
 
-//Note: Takes in courseId and userId as strings. 
+//Note: Takes in courseId and userId as strings.
 async function drop(courseId, userId) {
   //error check inputs
   error.str(courseId);
@@ -172,7 +165,7 @@ async function drop(courseId, userId) {
   const userCollection = await users();
 
   //check if the provided userId is a valid ObjectId
-  if(!ObjectId.isValid(userId)) throw 'Provided ID not proper format for ObjectID!';
+  if (!ObjectId.isValid(userId)) throw 'Provided ID not proper format for ObjectID!';
   //convert the ID string to an ObjectID
   let objId = ObjectId(userId);
 
@@ -180,22 +173,21 @@ async function drop(courseId, userId) {
   let tempUser = await userCollection.findOne({ _id: objId });
 
   //the above call will result in null if the given ID doesn't exist in the database
-  if(tempUser === null) throw 'User with that ID is not in database!';
+  if (tempUser === null) throw 'User with that ID is not in database!';
 
   //Make sure there's at least 1 course in the user's "classes" array
-  if(tempUser.classes.length == 0) throw "'Cannot drop a course from a user that doesn't have any courses!";
+  if (tempUser.classes.length == 0) throw "'Cannot drop a course from a user that doesn't have any courses!";
 
   //boolean to track if the course was found in the user's "classes" array
   let found = false;
-  
+
   //find the course in the user's "classes" array
-  for(let course of tempUser.classes)  {
+  for (let course of tempUser.classes) {
     //once the course has been found
-    if(course._id === courseId)  {
+    if (course._id === courseId) {
       found = true;
-      //edge case: user is dropping the only class they're enrolled in 
-      if(tempUser.classes.length == 1)
-        tempUser.classes.pop();
+      //edge case: user is dropping the only class they're enrolled in
+      if (tempUser.classes.length == 1) tempUser.classes.pop();
       //otherwise, remove the course from the array
       else {
         let ind = tempUser.classes.indexOf(course);
@@ -205,23 +197,19 @@ async function drop(courseId, userId) {
   }
 
   //Throw an error when trying to drop a course that the user wasn't involved in
-  if(found == false)  throw 'User was not enrolled-in or teaching that course!';
+  if (found == false) throw 'User was not enrolled-in or teaching that course!';
 
   //"push" the updated course info to the same ID in the database
-  const updatedInfo = await userCollection.updateOne(
-      {_id: objId},
-      { $set: tempUser}
-  );
+  const updatedInfo = await userCollection.updateOne({ _id: objId }, { $set: tempUser });
 
   //check that the update succeeded
   if (updatedInfo.modifiedCount === 0) throw 'Failed to drop course!';
 
-
   //upon successful add, return the name of the student for output
-  return tempUser.firstName + " " + tempUser.lastName;
+  return tempUser.firstName + ' ' + tempUser.lastName;
 }
 
-async function getCourses(userId)  {
+async function getCourses(userId) {
   //error check input
   error.str(userId);
 
@@ -229,7 +217,7 @@ async function getCourses(userId)  {
   const userCollection = await users();
 
   //check if the provided userId is a valid ObjectId
-  if(!ObjectId.isValid(userId)) throw 'Provided ID not proper format for ObjectID!';
+  if (!ObjectId.isValid(userId)) throw 'Provided ID not proper format for ObjectID!';
   //convert the ID string to an ObjectID
   let objId = ObjectId(userId);
 
@@ -237,7 +225,7 @@ async function getCourses(userId)  {
   let tempUser = await userCollection.findOne({ _id: objId });
 
   //the above call will result in null if the given ID doesn't exist in the database
-  if(!tempUser) throw 'User with that ID is not in database!';
+  if (!tempUser) throw 'User with that ID is not in database!';
 
   //retrieve course collection
   const courseCollection = await courses();
@@ -245,17 +233,17 @@ async function getCourses(userId)  {
   let courseList = [];
 
   //loop through each course that the user is teaching or enrolled in
-  for(let course of tempUser.classes) {
+  for (let course of tempUser.classes) {
     let courseId = course._id;
 
     //check that the courseId is a valid ObjectId
-    if(!ObjectId.isValid(userId)) throw 'Student has a course whose ID is not proper format for ObjectID!';
+    if (!ObjectId.isValid(userId)) throw 'Student has a course whose ID is not proper format for ObjectID!';
     //convert the ID string to an ObjectID
     let courseObjId = ObjectId(courseId);
     let foundCourse = await courseCollection.findOne({ _id: courseObjId });
 
     //the above call will result in null if the given ID doesn't exist in the respective database
-    if(!foundCourse) throw 'Student has a course whose ID is not in the course database!';
+    if (!foundCourse) throw 'Student has a course whose ID is not in the course database!';
 
     courseList.push(foundCourse.name);
   }
@@ -263,17 +251,12 @@ async function getCourses(userId)  {
   return courseList;
 }
 
-// const main = async () => {
-//   await createUser('Christian', 'Paz', 'cszablewskipaz@gmail.com', 'password123', 'teacher')
-// }
-
-// main()
-
 module.exports = {
   createUser,
   checkUser,
   enroll,
   addCourse,
   drop,
-  getCourses
+  getCourses,
+  doesEmailExist,
 };
