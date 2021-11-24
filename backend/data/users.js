@@ -249,15 +249,45 @@ async function getCourses(userId) {
   return courseList;
 }
 
+async function getUser(id) {
+  error.str(id);
+  const parsedId = error.validId(id);
+  const userCollection = await users();
+  const user = await userCollection.findOne({ _id: parsedId });
+  if (!user) throw new Error('No user found');
+
+  return user;
+}
+
 async function addGrade(studentId, assignmentId, grade) {
   error.str(studentId);
-  error.validId(studentId);
+  const parsedStudentId = error.validId(studentId);
   error.str(assignmentId);
-  error.validId(assignmentId);
+  const parsedAssignmentId = error.validId(assignmentId);
   error.str(grade);
+  const parsedGrade = parseInt(grade);
 
   const userCollection = await users();
-  const courseCollection = await courses();
+
+  // TODO: Must add checks for the following:
+
+  // student who isn't enrolled in the course
+  // invalid assignment
+  // assignment does not exist
+  // invalid student
+  // invalid grade
+
+  const query = {
+    $and: [{ _id: parsedStudentId }, { 'grades._id': parsedAssignmentId }],
+  };
+
+  //"push" the updated course info to the same ID in the database
+  const updatedInfo = await userCollection.updateOne(query, { $set: { grade: parsedGrade } });
+
+  //check that the update succeeded
+  if (updatedInfo.modifiedCount === 0) throw new Error('Failed to add grade for assignment');
+
+  return { gradeAdded: true };
 }
 
 async function submitAssignment(assignmentId, file) {}
