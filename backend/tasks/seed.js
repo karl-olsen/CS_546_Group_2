@@ -1,28 +1,41 @@
+const bcrypt = require('bcrypt')
 const connection = require('../config/mongoConnection');
 const data = require('../data');
 const mongo = require('mongodb');
 const { ObjectId } = require('mongodb');
 const fs = require('fs');
 
+async function hashPassword(plaintext) {
+  const saltRounds = 16;
+  return await bcrypt.hash(plaintext, saltRounds);
+}
 
 async function main() {
   const db = await connection.connectToDb();
   await db.dropDatabase();
 
-  //const x = await users.create('mike');
   const usersCollection = await db.collection('users');
   const coursesCollection = await db.collection('courses');
 
   const usersArray = [];
   const courseArray = [];
 
-  const createUser = (firstName, lastName, email, role) => {
+  let userCount = 1
+  const createUser = async (firstName, lastName, email, password, role) => {
+
+    console.log(`Created ${userCount}/20 users!`);
+    userCount++;
+
+    const hashedPassword = await hashPassword(password);
+    const parsedEmail = email.toLowerCase().trim()
+
     return {
       _id: new ObjectId(),
-      firstName, firstName,
-      lastName, lastName,
-      email, email,
-      role, role,
+      firstName, 
+      lastName, 
+      email: parsedEmail,
+      password: hashedPassword,
+      role,
       classes: []
     }
   }
@@ -68,20 +81,22 @@ async function main() {
   }
 
   let bucket = new mongo.GridFSBucket(db);
-  let file1 = fs.createReadStream('./tasks/Assignment 1.txt')
+  let file1 = fs.createReadStream('./Assignment 1.txt')
     .pipe(bucket.openUploadStream('Assignment 1.txt'))
-  let file2 = fs.createReadStream('./tasks/Assignment 2.txt')
+  let file2 = fs.createReadStream('./Assignment 2.txt')
     .pipe(bucket.openUploadStream('Assignment 2.txt'))
-  let file3 = fs.createReadStream('./tasks/Assignment 3.txt')
+  let file3 = fs.createReadStream('./Assignment 3.txt')
     .pipe(bucket.openUploadStream('Assignment 3.txt'))
-  let file4 = fs.createReadStream('./tasks/Assignment 4.txt')
+  let file4 = fs.createReadStream('./Assignment 4.txt')
     .pipe(bucket.openUploadStream('Assignment 4.txt'))
 
-  const user1 = createUser("Angela", "Martin", "AngelaMartin@dunddermifflin.com", "student");
+  console.log('Note this will take a little while because of the password hashing ! :)'); 
+
+  const user1 = await createUser("Angela", "Martin", "AngelaMartin@dunddermifflin.com", "password1", "student");
   const class1foruser1 = addClass(user1, 97);
   addGrades(class1foruser1, file1.id, 97);
 
-  const user2 = createUser("Stanley", "Hudson", "StanleyHudson@dunddermifflin.com", "student");
+  const user2 = await createUser("Stanley", "Hudson", "StanleyHudson@dunddermifflin.com", "password2", "student");
   const class1foruser2 = addClass(user2, 87);
   const class2foruser2 = addClass(user2, 90);
   const class3foruser2 = addClass(user2, 67);
@@ -89,7 +104,7 @@ async function main() {
   addGrades(class2foruser2, file3.id, 89);
   addGrades(class3foruser2, file2.id, 90);
 
-  const user3 = createUser("Phyllis", "Vance", "PhyllisVance@dunddermifflin.com", "student");
+  const user3 = await createUser("Phyllis", "Vance", "PhyllisVance@dunddermifflin.com", "password3", "student");
   const class1foruser3 = addClass(user3, 87);
   const class2foruser3 = addClass(user3, 90);
   const class3foruser3 = addClass(user3, 67);
@@ -99,10 +114,10 @@ async function main() {
   addGrades(class2foruser3, file2.id, 89);
   addGrades(class3foruser3, file1.id, 90);
 
-  const user4 = createUser("Meredith", "Palmer", "MeredithPalmer@dunddermifflin.com", "student");
+  const user4 = await createUser("Meredith", "Palmer", "MeredithPalmer@dunddermifflin.com", "password4", "student");
   addClass(user4, 87);
 
-  const user5 = createUser("Toby", "Flenderson", "TobyFlenderson@dunddermifflin.com", "student");
+  const user5 = await createUser("Toby", "Flenderson", "TobyFlenderson@dunddermifflin.com", "password5", "student");
   const class1foruser5 = addClass(user5, 87);
   const class2foruser5 = addClass(user5, 90);
   const class3foruser5 = addClass(user5, 67);
@@ -115,7 +130,7 @@ async function main() {
   addGrades(class3foruser5, file1.id, 90);
   addGrades(class4foruser5, file1.id, 90);
 
-  const user6 = createUser("Creed", "Bratton", "CreedBratton@dunddermifflin.com", "student");
+  const user6 = await createUser("Creed", "Bratton", "CreedBratton@dunddermifflin.com", "password6", "student");
   const class1foruser6 = addClass(user6, 20);
   const class2foruser6 = addClass(user6, 30);
   addGrades(class1foruser6, file1.id, 10);
@@ -123,7 +138,7 @@ async function main() {
   addGrades(class2foruser6, file1.id, 10);
   addGrades(class2foruser6, file2.id, 19);
 
-  const user7 = createUser("Gabe", "Lewis", "GabeLewis@dunddermifflin.com", "student");
+  const user7 = await createUser("Gabe", "Lewis", "GabeLewis@dunddermifflin.com", "password7", "student");
   const class1foruser7 = addClass(user7, 90);
   const class2foruser7 = addClass(user7, 90);
   const class3foruser7 = addClass(user7, 90);
@@ -143,14 +158,14 @@ async function main() {
   addGrades(class5foruser7, file1.id, 100);
   addGrades(class6foruser7, file1.id, 100);
 
-  const user8 = createUser("Roy", "Anderson", "RoyAnderson@dunddermifflin.com", "student");
+  const user8 = await createUser("Roy", "Anderson", "RoyAnderson@dunddermifflin.com", "password8", "student");
 
-  const user9 = createUser("Darryl", "Philbin", "DarrylPhilbin@dunddermifflin.com", "student");
+  const user9 = await createUser("Darryl", "Philbin", "DarrylPhilbin@dunddermifflin.com", "password9", "student");
   const class1foruser9 = addClass(user9, 87);
   const class2foruser9 = addClass(user9, 90);
   addGrades(class2foruser9, file1.id, 90);
 
-  const user10 = createUser("Oscar", "Martinez", "OscarMartinez@dunddermifflin.com", "student");
+  const user10 = await createUser("Oscar", "Martinez", "OscarMartinez@dunddermifflin.com", "password10", "student");
   const class1foruser10 = addClass(user10, 87);
   const class2foruser10 = addClass(user10, 90);
   const class3foruser10 = addClass(user10, 55);
@@ -163,16 +178,16 @@ async function main() {
   addGrades(class5foruser10, file1.id, 88);
   addGrades(class6foruser10, file1.id, 12);
 
-  const user11 = createUser("Kevin", "Malone", "KevinMalone@dunddermifflin.com", "teacher");
-  const user12 = createUser("Andy", "Bernard", "AndyBernard@dunddermifflin.com", "teacher");
-  const user13 = createUser("Michael", "Scott", "MichaelScott@dunddermifflin.com", "teacher");
-  const user14 = createUser("Dwight", "Schrute", "DwightSchrute@dunddermifflin.com", "teacher");
-  const user15 = createUser("Jim", "Halpert", "JimHalpert@dunddermifflin.com", "teacher");
-  const user16 = createUser("Pam", "Beesly", "PamBeesly@dunddermifflin.com", "teacher");
-  const user17 = createUser("Ryan", "Howard", "RyanHoward@dunddermifflin.com", "teacher");
-  const user18 = createUser("Nellie", "Bertram", "NellieBertram@dunddermifflin.com", "teacher");
-  const user19 = createUser("Holly", "Flax", "HollyFlax@dunddermifflin.com", "teacher");
-  const user20 = createUser("Erin", "Hannon", "ErinHannon@dunddermifflin.com", "teacher");
+  const user11 = await createUser("Kevin", "Malone", "KevinMalone@dunddermifflin.com", "password11", "teacher");
+  const user12 = await createUser("Andy", "Bernard", "AndyBernard@dunddermifflin.com", "password12", "teacher");
+  const user13 = await createUser("Michael", "Scott", "MichaelScott@dunddermifflin.com", "password13", "teacher");
+  const user14 = await createUser("Dwight", "Schrute", "DwightSchrute@dunddermifflin.com", "password14", "teacher");
+  const user15 = await createUser("Jim", "Halpert", "JimHalpert@dunddermifflin.com", "password15", "teacher");
+  const user16 = await createUser("Pam", "Beesly", "PamBeesly@dunddermifflin.com", "password16", "teacher");
+  const user17 = await createUser("Ryan", "Howard", "RyanHoward@dunddermifflin.com", "password17", "teacher");
+  const user18 = await createUser("Nellie", "Bertram", "NellieBertram@dunddermifflin.com", "password18", "teacher");
+  const user19 = await createUser("Holly", "Flax", "HollyFlax@dunddermifflin.com", "password19", "teacher");
+  const user20 = await createUser("Erin", "Hannon", "ErinHannon@dunddermifflin.com", "password20", "teacher");
 
   const course1 = createCourse("Web Programming");
   const course1Assignment1 = createAssignment("Quiz", "MongoDB Quiz", "Test your MongoDB knowledge");
@@ -318,7 +333,6 @@ async function main() {
   courseArray.push(course9);
   courseArray.push(course10);
 
-
   await usersCollection.insertMany(
     usersArray
   );
@@ -335,5 +349,5 @@ main()
     console.error(e);
   })
   .finally(async () => {
-    //connection.closeConnection();
+    connection.closeConnection();
   });
