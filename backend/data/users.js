@@ -259,7 +259,17 @@ async function getUser(id) {
   return user;
 }
 
-async function addGrade(studentId, assignmentId, grade) {
+async function getCourse(id) {
+  error.str(id);
+  const parsedId = error.validId(id);
+  const coursesCollection = await courses();
+  const course = await coursesCollection.findOne({ _id: parsedId });
+  if (!course) throw new Error('No course found');
+  return course;
+}
+
+async function addGrade(studentId, courseId, assignmentId, grade) {
+
   error.str(studentId);
   const parsedStudentId = error.validId(studentId);
   error.str(assignmentId);
@@ -268,14 +278,14 @@ async function addGrade(studentId, assignmentId, grade) {
   const parsedGrade = parseInt(grade);
 
   const userCollection = await users();
+  const user = await getUser(studentId);
+  const course = await getCourse(courseId);
 
-  // TODO: Must add checks for the following:
-
-  // student who isn't enrolled in the course
-  // invalid assignment
-  // assignment does not exist
-  // invalid student
-  // invalid grade
+  let classObj = user.classes.find(e => e._id === courseId);
+  if (!classObj) throw new Error("Student is not enrolled in the course");
+  if (!course.assignments.some(e => e._id.toString() === assignmentId)) throw new Error('No assignment found');
+  if (!classObj.grades.some(e => e._id === assignmentId)) throw new Error('No assignment found for the user');
+  if (grade < 0 || grade > 100) throw new Error('Grade should be betwenn 0 - 100')
 
   const query = {
     $and: [{ _id: parsedStudentId }, { 'grades._id': parsedAssignmentId }],
@@ -290,7 +300,7 @@ async function addGrade(studentId, assignmentId, grade) {
   return { gradeAdded: true };
 }
 
-async function submitAssignment(assignmentId, file) {}
+async function submitAssignment(assignmentId, file) { }
 
 // const main = async () => {
 //   await createUser('Christian', 'Paz', 'cszablewskipaz@gmail.com', 'password123', 'teacher')
@@ -306,4 +316,5 @@ module.exports = {
   drop,
   getCourses,
   hashPassword,
+  addGrade
 };

@@ -209,14 +209,36 @@ async function removeTeacher(courseId, teacherId) {
   return tempCourse.name;
 }
 
+async function getCourse(id) {
+  error.str(id);
+  const parsedId = error.validId(id);
+  const coursesCollection = await courses();
+  const course = await coursesCollection.findOne({ _id: parsedId });
+  if (!course) throw new Error('No course found');
+  return course;
+}
+
 async function createAssignment(type, name, description, courseId) {
+  error.str(type);
+  error.str(name);
+  error.str(description);
+  error.str(courseId);
+  const parsedCourseID = error.validId(courseId);
+  const coursesCollection = await courses();
+  const course = await getCourse(courseId);
+  const _id = new ObjectId();
+
   const newAssignment = {
+    _id,
     type,
     name,
     description,
   };
 
-  return newAssignment;
+  const updatedInfo = await coursesCollection.updateOne({ _id: parsedCourseID }, { $push: { assignments: newAssignment } });
+  if (updatedInfo.modifiedCount === 0) throw new Error('Failed to addded assignment to the course!');
+
+  return _id;
 }
 
 module.exports = {
@@ -225,4 +247,5 @@ module.exports = {
   addStudent,
   removeStudent,
   removeTeacher,
+  createAssignment
 };
