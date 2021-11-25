@@ -1,26 +1,31 @@
-const env = require('../env')
-const jwt = require('jsonwebtoken')
-const express = require('express')
-const router = express.Router()
-const { checkUser } = require('../data/users')
+const env = require('../env');
+const jwt = require('jsonwebtoken');
+const express = require('express');
+const router = express.Router();
+const { checkUser } = require('../data/users');
+const error = require('../error');
 
 router.post('/', async (req, res) => {
-
-    const { email, password } = req.body
-
+  try {
+    const userBody = req.body;
     try {
-        await checkUser(email, password)
-        const payload = { email }
-        const secret = env.secret
-        const token = jwt.sign(payload, secret, {
-            expiresIn: '1h'
-        })
-        res.cookie('token', token, { httpOnly: true }).sendStatus(200);
-        console.log('Cookie is stored!')
-    } catch(e) {
-        console.log(e)
+      error.str(userBody?.email);
+      error.str(userBody?.password);
+      await checkUser(userBody?.email, userBody?.password);
+    } catch (e) {
+      return res.status(400).json({ error: e.message });
     }
+    const { email } = userBody;
+    const payload = { email };
+    const secret = env.secret;
+    const token = jwt.sign(payload, secret, {
+      expiresIn: '1h',
+    });
+    res.cookie('token', token, { httpOnly: true });
+    res.status(200).json({ authenticated: true });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
 
-})
-  
-module.exports = router
+module.exports = router;
