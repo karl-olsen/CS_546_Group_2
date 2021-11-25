@@ -1,6 +1,8 @@
 const mongoCollections = require('../config/mongoCollections');
 const users = mongoCollections.users;
 const courses = mongoCollections.courses;
+const assignmentsChunks = mongoCollections.assignmentsChunks;
+const assignmentsFiles = mongoCollections.assignmentsFiles;
 const error = require('../error');
 const bcrypt = require('bcrypt');
 let { ObjectId } = require('mongodb');
@@ -251,6 +253,80 @@ async function getCourses(userId) {
   return courseList;
 }
 
+async function getRole(userId) {
+  error.str(userId);
+  const parsedId = error.validId(userId);
+  const usersCollection = await users();
+  const user = await usersCollection.findOne({ _id: parsedId });
+  if (!user) throw new Error("User doesn't exist!");
+  return user.role;
+}
+
+async function submissionExists(studentId, assignmentId) {
+  error.str(studentId);
+  error.str(assignmentId);
+  const parsedStudentId = error.validId(studentId);
+  const parsedAssignmentId = error.validId(assignmentId);
+
+  // Step 1: Find if student and assignment id exist with data object
+  const userCollection = await users();
+  const query = {
+    $and: [{ _id: parsedStudentId }, { 'classes.grades._id': parsedAssignmentId }],
+  };
+  const submissionQuery = await userCollection.findOne(query);
+  if (!submissionQuery)
+    throw new Error('Cannot check submission state due to no matching student with given assignment id');
+
+  // Step 2: If submission does not exist return false.
+  // Otherwise, remove old submission from assignments bucket and return true
+  if (!submissionQuery?.submissionFile) return false;
+  const fileId = submissionQuery?.submissionFile;
+
+  // First we need to delete the file metadata
+  const assignmentsFilesCollection = await assignmentsFiles();
+  const filesQuery = await assignmentsFilesCollection.remove({ _id: fileId });
+  if (!filesQuery || !filesQuery.nRemoved !== 1) throw new Error(`Failed to delete assignment file metadata`);
+
+  // Then delete the file metadata
+  const assignmentsChunksCollection = await assignmentsChunks();
+  const chunksQuery = await assignmentsChunksCollection.remove({ files_id: fileId });
+  if (!chunksQuery || chunksQuery.nRemoved !== 1) throw new Error(`Failed to delete assignment chunks`);
+
+  return true;
+}
+
+async function submitAssignment(studentId, assignmentId, fileId) {
+  error.str(studentId);
+  error.str(assignmentId);
+  error.str(fileId);
+  const parsedStudentId = error.validId(studentId);
+  const parsedAssignmentId = error.validId(assignmentId);
+  const parsedFileId = error.validId(fileId);
+
+  const userRole = await getRole(parsedStudentId);
+  if (!userRole || userRole !== 'student') throw new Error('Students are only allowed to upload assignments');
+
+  // Step 1: Find if student and assignment id exist with data object
+  const userCollection = await users();
+  const query = {
+    $and: [{ _id: parsedStudentId }, { 'classes.grades._id': parsedAssignmentId }],
+  };
+  const submissionQuery = await userCollection.findOne(query);
+  if (!submissionQuery)
+    throw new Error('Cannot check submission state due to no matching student with given assignment id');
+
+  // Step 2: Check if assignment already has a submission and delete all necessary old file data
+  const overwrote = await submissionExists(parsedStudentId, parsedAssignmentId);
+
+  // Step 3: Update the assignment's fileId with the new one
+  const submissionResult = await userCollection.updateOne(query, { $set: { submissionFile: parsedFileId } });
+  if (!submissionResult.matchedCount && !submissionResult.modifiedCount) {
+    throw new Error(`Unable to update file submission data for user`);
+  }
+
+  return { overwrote, uploaded: true };
+}
+
 module.exports = {
   createUser,
   checkUser,
@@ -259,4 +335,6 @@ module.exports = {
   drop,
   getCourses,
   doesEmailExist,
+  submitAssignment,
+  getRole,
 };
