@@ -301,14 +301,6 @@ async function addGrade(studentId, courseId, assignmentId, grade) {
   return { gradeAdded: true };
 }
 
-async function submitAssignment(assignmentId, file) {}
-
-// const main = async () => {
-//   await createUser('Christian', 'Paz', 'cszablewskipaz@gmail.com', 'password123', 'teacher')
-// }
-
-// main()
-
 module.exports = {
   createUser,
   checkUser,
