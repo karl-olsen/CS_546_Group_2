@@ -6,6 +6,7 @@ const bcrypt = require('bcrypt');
 let { ObjectId } = require('mongodb');
 
 async function doesEmailExist(email) {
+  error.str(email);
   const usersCollection = await users();
   const user = await usersCollection.findOne({ email: email });
   if (!user) return false;
@@ -13,6 +14,7 @@ async function doesEmailExist(email) {
 }
 
 async function hashPassword(plaintext) {
+  error.str(plaintext);
   const saltRounds = 16;
   return await bcrypt.hash(plaintext, saltRounds);
 }
@@ -269,7 +271,6 @@ async function getCourse(id) {
 }
 
 async function addGrade(studentId, courseId, assignmentId, grade) {
-
   error.str(studentId);
   const parsedStudentId = error.validId(studentId);
   error.str(assignmentId);
@@ -281,11 +282,11 @@ async function addGrade(studentId, courseId, assignmentId, grade) {
   const user = await getUser(studentId);
   const course = await getCourse(courseId);
 
-  let classObj = user.classes.find(e => e._id === courseId);
-  if (!classObj) throw new Error("Student is not enrolled in the course");
-  if (!course.assignments.some(e => e._id.toString() === assignmentId)) throw new Error('No assignment found');
-  if (!classObj.grades.some(e => e._id === assignmentId)) throw new Error('No assignment found for the user');
-  if (grade < 0 || grade > 100) throw new Error('Grade should be betwenn 0 - 100')
+  let classObj = user.classes.find((e) => e._id === courseId);
+  if (!classObj) throw new Error('Student is not enrolled in the course');
+  if (!course.assignments.some((e) => e._id.toString() === assignmentId)) throw new Error('No assignment found');
+  if (!classObj.grades.some((e) => e._id === assignmentId)) throw new Error('No assignment found for the user');
+  if (grade < 0 || grade > 100) throw new Error('Grade should be betwenn 0 - 100');
 
   const query = {
     $and: [{ _id: parsedStudentId }, { 'grades._id': parsedAssignmentId }],
@@ -300,14 +301,6 @@ async function addGrade(studentId, courseId, assignmentId, grade) {
   return { gradeAdded: true };
 }
 
-async function submitAssignment(assignmentId, file) { }
-
-// const main = async () => {
-//   await createUser('Christian', 'Paz', 'cszablewskipaz@gmail.com', 'password123', 'teacher')
-// }
-
-// main()
-
 module.exports = {
   createUser,
   checkUser,
@@ -315,6 +308,7 @@ module.exports = {
   addCourseToTeacher,
   drop,
   getCourses,
+  doesEmailExist,
   hashPassword,
-  addGrade
+  addGrade,
 };
