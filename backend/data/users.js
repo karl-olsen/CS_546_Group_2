@@ -87,7 +87,7 @@ async function enroll(courseId, studentId) {
   //if the student is already enrolled in the respective course, throw an error
   //NOTE: Shouldn't be necessary, as courses.js' addStudent() function SHOULD catch this case and throw an error first, but including just in case
   for (let course of tempStudent.classes) {
-    if (course._id === parsedCourseId) throw 'Student is already enrolled in that course!';
+    if (course._id === courseId) throw 'Student is already enrolled in that course!';
   }
 
   //create new class Object to be added to the student's "classes" array
@@ -130,7 +130,7 @@ async function addCourseToTeacher(courseId, teacherId) {
 
   //if the teacher is already teaching the respective course, throw an error
   for (let course of tempTeacher.classes) {
-    if (course._id === parsedCourseId) throw 'Teacher is already teaching that course!';
+    if (course._id === courseId) throw 'Teacher is already teaching that course!';
   }
 
   //create new class Object to be added to the teacher's "classes" array

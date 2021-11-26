@@ -214,30 +214,6 @@ async function getCourse(id) {
   return course;
 }
 
-// async function addEmptyGradeToAllEnrolled(courseId, assignmentId) {
-//   if (!assignmentId || !courseId) throw new Error('Missing arguments to create empty grade');
-//   const newGrade = {
-//     _id: assignmentId,
-//     submissionFile: null,
-//     grade: -1,
-//   };
-
-//   const userCollection = await users();
-//   const userClassesArr = await userCollection.find({ 'classes._id': courseId }).toArray();
-//   if (!userClassesArr || userClassesArr.length === 0)
-//     throw new Error('Unable to find any matching courses to apply empty grade');
-
-//   console.log(userClassesArr);
-
-//   const userClassesArr.forEach((user) => {
-//     if (user?.role === 'student') {
-//       user?.classes.forEach((course) => {
-//         if (course._id === courseId) return;
-//       });
-//     }
-//   });
-// }
-
 async function createAssignment(type, name, description, courseId) {
   error.str(type);
   error.str(name);
@@ -261,8 +237,6 @@ async function createAssignment(type, name, description, courseId) {
     { $push: { assignments: newAssignment } }
   );
   if (updatedInfo.modifiedCount === 0) throw new Error('Failed to add assignment to the course!');
-
-  // await addEmptyGradeToAllEnrolled(parsedCourseID, assignmentId);
 
   return assignmentId;
 }
