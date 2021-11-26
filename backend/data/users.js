@@ -301,6 +301,27 @@ async function addGrade(studentId, courseId, assignmentId, grade) {
   return { gradeAdded: true };
 }
 
+/**
+ * Fetch grade of a student by assignmentId
+ * @param {string} assignmentId 
+ * @param {string} studentId 
+ * @returns object
+ */
+async function fetchGrade(assignmentId, studentId) {
+  const errorMSg = 'No assignments found for the given assignment id';
+  const user = await getUser(studentId);
+  if (user && !user.classes) throw new Error(errorMSg);
+  for (const classObj of user.classes) {
+    const assignment = classObj.grades.find((e) => e._id === assignmentId);
+    if (!assignment) throw new Error(errorMSg);
+    const response = {
+      status: "success",
+      grade: assignment.grade
+    }
+    return response;
+  }
+}
+
 module.exports = {
   getUser,
   createUser,
@@ -312,4 +333,5 @@ module.exports = {
   doesEmailExist,
   hashPassword,
   addGrade,
+  fetchGrade
 };
