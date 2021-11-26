@@ -245,7 +245,7 @@ async function getCourses(userId) {
     //the above call will result in null if the given ID doesn't exist in the respective database
     if (!foundCourse) throw 'Student has a course whose ID is not in the course database!';
 
-    courseList.push(foundCourse.name);
+    courseList.push(foundCourse);
   }
 
   return courseList;
@@ -302,6 +302,7 @@ async function addGrade(studentId, courseId, assignmentId, grade) {
 }
 
 module.exports = {
+  getUser,
   createUser,
   checkUser,
   enroll,
