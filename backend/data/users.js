@@ -72,30 +72,27 @@ async function enroll(courseId, studentId) {
   //error check inputs
   error.str(courseId);
   error.str(studentId);
+  const parsedCourseId = error.validId(courseId);
+  const parsedStudentId = error.validId(studentId);
 
   //retrieve the users collection
   const userCollection = await users();
 
-  //check if the provided studentId is a valid ObjectId
-  if (!ObjectId.isValid(studentId)) throw 'Provided ID not proper format for ObjectID!';
-  //convert the ID string to an ObjectID
-  let objId = ObjectId(studentId);
-
   //retrieve the original user information
-  let tempStudent = await userCollection.findOne({ _id: objId });
+  let tempStudent = await userCollection.findOne({ _id: parsedStudentId });
 
   //the above call will result in null if the given ID doesn't exist in the database
-  if (tempStudent === null) throw 'User with that ID is not in database!';
+  if (!tempStudent) throw 'User with that ID is not in database!';
 
   //if the student is already enrolled in the respective course, throw an error
   //NOTE: Shouldn't be necessary, as courses.js' addStudent() function SHOULD catch this case and throw an error first, but including just in case
   for (let course of tempStudent.classes) {
-    if (course._id == courseId) throw 'Student is already enrolled in that course!';
+    if (course._id === parsedCourseId) throw 'Student is already enrolled in that course!';
   }
 
   //create new class Object to be added to the student's "classes" array
   const classInfo = {
-    _id: courseId,
+    _id: parsedCourseId,
     grades: [],
     overallGrade: 0,
   };
@@ -104,7 +101,7 @@ async function enroll(courseId, studentId) {
   tempStudent.classes.push(classInfo);
 
   //"push" the updated course info to the same ID in the database
-  const updatedInfo = await userCollection.updateOne({ _id: objId }, { $set: tempStudent });
+  const updatedInfo = await userCollection.updateOne({ _id: parsedStudentId }, { $set: tempStudent });
 
   //check that the update succeeded
   if (updatedInfo.modifiedCount === 0) throw 'Failed to add course!';
@@ -119,36 +116,33 @@ async function addCourseToTeacher(courseId, teacherId) {
   //error check inputs
   error.str(courseId);
   error.str(teacherId);
+  const parsedCourseId = error.validId(courseId);
+  const parsedTeacherId = error.validId(teacherId);
 
   //retrieve the users collection
   const userCollection = await users();
 
-  //check if the provided teacherId is a valid ObjectId
-  if (!ObjectId.isValid(teacherId)) throw 'Provided ID not proper format for ObjectID!';
-  //convert the ID string to an ObjectID
-  let objId = ObjectId(teacherId);
-
   //retrieve the original user information
-  let tempTeacher = await userCollection.findOne({ _id: objId });
+  let tempTeacher = await userCollection.findOne({ _id: parsedTeacherId });
 
   //the above call will result in null if the given ID doesn't exist in the database
   if (tempTeacher === null) throw 'User with that ID is not in database!';
 
   //if the teacher is already teaching the respective course, throw an error
   for (let course of tempTeacher.classes) {
-    if (course._id == courseId) throw 'Teacher is already teaching that course!';
+    if (course._id === parsedCourseId) throw 'Teacher is already teaching that course!';
   }
 
   //create new class Object to be added to the teacher's "classes" array
   const classInfo = {
-    _id: courseId,
+    _id: parsedCourseId,
   };
 
   //push the new class Object to the tempTeacher's classes array
   tempTeacher.classes.push(classInfo);
 
   //"push" the updated course info to the same ID in the database
-  const updatedInfo = await userCollection.updateOne({ _id: objId }, { $set: tempTeacher });
+  const updatedInfo = await userCollection.updateOne({ _id: parsedTeacherId }, { $set: tempTeacher });
 
   //check that the update succeeded
   if (updatedInfo.modifiedCount === 0) throw 'Failed to add course to teacher!';
@@ -253,60 +247,15 @@ async function getCourses(userId) {
   return courseList;
 }
 
-async function getRole(userId) {
-  error.str(userId);
-  const parsedId = error.validId(userId);
-  const usersCollection = await users();
-  const user = await usersCollection.findOne({ _id: parsedId });
-  if (!user) throw new Error("User doesn't exist!");
-  return user.role;
-}
-
-async function submissionExists(studentId, assignmentId) {
-  error.str(studentId);
-  error.str(assignmentId);
-  const parsedStudentId = error.validId(studentId);
-  const parsedAssignmentId = error.validId(assignmentId);
-
-  // Step 1: Find if student and assignment id exist with data object
-  const userCollection = await users();
-  const query = {
-    $and: [{ _id: parsedStudentId }, { 'classes.grades._id': parsedAssignmentId }],
-  };
-  const submissionQuery = await userCollection.findOne(query);
-  if (!submissionQuery)
-    throw new Error('Cannot check submission state due to no matching student with given assignment id');
-
-  // Step 2: If submission does not exist return false.
-  // Otherwise, remove old submission from assignments bucket and return true
-  if (!submissionQuery?.submissionFile) return false;
-  const fileId = submissionQuery?.submissionFile;
-
-  // First we need to delete the file metadata
-  const assignmentsFilesCollection = await assignmentsFiles();
-  const filesQuery = await assignmentsFilesCollection.remove({ _id: fileId });
-  if (!filesQuery || !filesQuery.nRemoved !== 1) throw new Error(`Failed to delete assignment file metadata`);
-
-  // Then delete the file metadata
-  const assignmentsChunksCollection = await assignmentsChunks();
-  const chunksQuery = await assignmentsChunksCollection.remove({ files_id: fileId });
-  if (!chunksQuery || chunksQuery.nRemoved !== 1) throw new Error(`Failed to delete assignment chunks`);
-
-  return true;
-}
-
 async function getUser(id) {
-  error.str(id);
   const parsedId = error.validId(id);
   const userCollection = await users();
   const user = await userCollection.findOne({ _id: parsedId });
   if (!user) throw new Error('No user found');
-
   return user;
 }
 
 async function getCourse(id) {
-  error.str(id);
   const parsedId = error.validId(id);
   const coursesCollection = await courses();
   const course = await coursesCollection.findOne({ _id: parsedId });
@@ -326,15 +275,20 @@ async function addGrade(studentId, courseId, assignmentId, grade) {
   const user = await getUser(studentId);
   const course = await getCourse(courseId);
 
-  let classObj = user.classes.find((e) => e._id === courseId);
+  let classObj = user.classes.find((e) => e._id.toString() === courseId);
   if (!classObj) throw new Error('Student is not enrolled in the course');
   if (!course.assignments.some((e) => e._id.toString() === assignmentId)) throw new Error('No assignment found');
-  if (!classObj.grades.some((e) => e._id === assignmentId)) throw new Error('No assignment found for the user');
+  if (!classObj.grades.some((e) => e._id.toString() === assignmentId))
+    throw new Error('No assignment found for the user');
   if (grade < 0 || grade > 100) throw new Error('Grade should be betwenn 0 - 100');
 
   const query = {
-    $and: [{ _id: parsedStudentId }, { 'grades._id': parsedAssignmentId }],
+    $and: [{ _id: parsedStudentId }, { 'classes.grades._id': parsedAssignmentId }],
   };
+
+  // UPDATE DOES NOT SET THE GRADE FOR THE SPECIFIC GRADE ID
+  // NOT SURE WHAT CAN BE DONE YET
+  // MUST TRIGGER A REGRADE
 
   //"push" the updated course info to the same ID in the database
   const updatedInfo = await userCollection.updateOne(query, { $set: { grade: parsedGrade } });
@@ -345,36 +299,68 @@ async function addGrade(studentId, courseId, assignmentId, grade) {
   return { gradeAdded: true };
 }
 
-async function submitAssignment(studentId, assignmentId, fileId) {
+async function submitAssignment(studentId, assignmentId, fileId, courseId) {
   error.str(studentId);
   error.str(assignmentId);
   error.str(fileId);
+  error.str(courseId);
   const parsedStudentId = error.validId(studentId);
   const parsedAssignmentId = error.validId(assignmentId);
   const parsedFileId = error.validId(fileId);
+  const parsedCourseId = error.validId(courseId);
 
-  const userRole = await getRole(parsedStudentId);
-  if (!userRole || userRole !== 'student') throw new Error('Students are only allowed to upload assignments');
+  const userObj = await getUser(parsedStudentId);
+  if (!userObj || userObj?.role !== 'student') throw new Error('Students are only allowed to upload assignments');
 
-  // Step 1: Find if student and assignment id exist with data object
-  const userCollection = await users();
-  const query = {
-    $and: [{ _id: parsedStudentId }, { 'classes.grades._id': parsedAssignmentId }],
-  };
-  const submissionQuery = await userCollection.findOne(query);
-  if (!submissionQuery)
-    throw new Error('Cannot check submission state due to no matching student with given assignment id');
+  // TODO:
+  // Ensure assignment is in course
 
-  // Step 2: Check if assignment already has a submission and delete all necessary old file data
-  const overwrote = await submissionExists(parsedStudentId, parsedAssignmentId);
+  let modified = false;
+  let overwritten = false;
+  let matchedIndex = 0;
 
-  // Step 3: Update the assignment's fileId with the new one
-  const submissionResult = await userCollection.updateOne(query, { $set: { submissionFile: parsedFileId } });
-  if (!submissionResult.matchedCount && !submissionResult.modifiedCount) {
-    throw new Error(`Unable to update file submission data for user`);
+  for (let i = 0; i < userObj.classes.length; i++) {
+    let currClass = userObj.classes[i];
+    if (currClass._id.toString() === parsedCourseId.toString()) {
+      // then we have the current class
+      matchedIndex = i;
+      for (let j = 0; j < currClass.grades.length; j++) {
+        // Check if assignment already has a submission
+        let currGrade = currClass.grades[j];
+        if (currGrade._id.toString() === parsedAssignmentId.toString()) {
+          // TODO: Delete all necessary old file data from assignments collection
+          currGrade.submissionFile = parsedFileId;
+          overwritten = true;
+        }
+      }
+      modified = true;
+    }
   }
 
-  return { overwrote, uploaded: true };
+  // Ensure student is enrolled in course
+  if (!modified) throw new Error('Unable to add new submission due to no student enrolled');
+
+  if (!overwritten) {
+    const newGrade = {
+      _id: parsedAssignmentId,
+      submissionFile: parsedFileId,
+      grade: -1,
+    };
+
+    userObj.classes[matchedIndex].grades.push(newGrade);
+  }
+
+  // Step 3: Update the student's classes array
+  const userCollection = await users();
+  const submissionResult = await userCollection.updateOne(
+    { _id: parsedStudentId },
+    { $set: { classes: userObj.classes } }
+  );
+  if (!submissionResult.matchedCount && !submissionResult.modifiedCount) {
+    throw new Error(`Unable to update classes for student submission`);
+  }
+
+  return { overwritten, uploaded: true };
 }
 
 module.exports = {
@@ -386,7 +372,6 @@ module.exports = {
   getCourses,
   doesEmailExist,
   submitAssignment,
-  getRole,
   hashPassword,
   addGrade,
 };
