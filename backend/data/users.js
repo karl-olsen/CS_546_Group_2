@@ -115,7 +115,7 @@ async function enroll(courseId, studentId) {
 
 //Note: Takes in courseId and studentId as strings.
 //NOTE: This is the function to add a course to a *TEACHER*
-async function addCourse(courseId, teacherId) {
+async function addCourseToTeacher(courseId, teacherId) {
   //error check inputs
   error.str(courseId);
   error.str(teacherId);
@@ -295,6 +295,56 @@ async function submissionExists(studentId, assignmentId) {
   return true;
 }
 
+async function getUser(id) {
+  error.str(id);
+  const parsedId = error.validId(id);
+  const userCollection = await users();
+  const user = await userCollection.findOne({ _id: parsedId });
+  if (!user) throw new Error('No user found');
+
+  return user;
+}
+
+async function getCourse(id) {
+  error.str(id);
+  const parsedId = error.validId(id);
+  const coursesCollection = await courses();
+  const course = await coursesCollection.findOne({ _id: parsedId });
+  if (!course) throw new Error('No course found');
+  return course;
+}
+
+async function addGrade(studentId, courseId, assignmentId, grade) {
+  error.str(studentId);
+  const parsedStudentId = error.validId(studentId);
+  error.str(assignmentId);
+  const parsedAssignmentId = error.validId(assignmentId);
+  error.str(grade);
+  const parsedGrade = parseInt(grade);
+
+  const userCollection = await users();
+  const user = await getUser(studentId);
+  const course = await getCourse(courseId);
+
+  let classObj = user.classes.find((e) => e._id === courseId);
+  if (!classObj) throw new Error('Student is not enrolled in the course');
+  if (!course.assignments.some((e) => e._id.toString() === assignmentId)) throw new Error('No assignment found');
+  if (!classObj.grades.some((e) => e._id === assignmentId)) throw new Error('No assignment found for the user');
+  if (grade < 0 || grade > 100) throw new Error('Grade should be betwenn 0 - 100');
+
+  const query = {
+    $and: [{ _id: parsedStudentId }, { 'grades._id': parsedAssignmentId }],
+  };
+
+  //"push" the updated course info to the same ID in the database
+  const updatedInfo = await userCollection.updateOne(query, { $set: { grade: parsedGrade } });
+
+  //check that the update succeeded
+  if (updatedInfo.modifiedCount === 0) throw new Error('Failed to add grade for assignment');
+
+  return { gradeAdded: true };
+}
+
 async function submitAssignment(studentId, assignmentId, fileId) {
   error.str(studentId);
   error.str(assignmentId);
@@ -331,10 +381,12 @@ module.exports = {
   createUser,
   checkUser,
   enroll,
-  addCourse,
+  addCourseToTeacher,
   drop,
   getCourses,
   doesEmailExist,
   submitAssignment,
   getRole,
+  hashPassword,
+  addGrade,
 };
