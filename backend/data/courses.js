@@ -154,6 +154,148 @@ async function removeStudent(courseId, studentId) {
   return tempCourse.name;
 }
 
+async function addStudent(courseId, studentId) {
+  //error check inputs
+  error.str(courseId);
+  error.str(studentId);
+
+  //retrieve the courses collection
+  const coursesCollection = await courses();
+
+  //check if the provided courseId is a valid ObjectId
+  if (!ObjectId.isValid(courseId)) throw 'Provided ID not proper format for ObjectID!';
+  //convert the ID string to an ObjectID
+  let objId = ObjectId(courseId);
+
+  //retrieve the original course information
+  let tempCourse = await coursesCollection.findOne({ _id: objId });
+
+  //the above call will result in null if the given ID doesn't exist in the database
+  if (tempCourse === null) throw 'Course with that ID is not in database!';
+
+  //if the student already teaches the respective course, throw an error
+  if (tempCourse.students.includes(studentId)) throw 'Student is already enrolled in that course!';
+
+  //push the provided studentId to the tempCourse's students array
+  tempCourse.students.push(studentId);
+
+  //"push" the updated course info to the same ID in the database
+  const updatedInfo = await coursesCollection.updateOne({ _id: objId }, { $set: tempCourse });
+
+  //check that the update succeeded
+  if (updatedInfo.modifiedCount === 0) throw 'Failed to add student!';
+
+  //upon successful add, return the name of the course for output
+  return tempCourse.name;
+}
+
+//Note: Takes in courseId and assignmentId as strings.
+async function removeAssignment(courseId, assignmentId) {
+  //error check inputs
+  error.str(courseId);
+  error.str(assignmentId);
+
+  //retrieve the courses collection
+  const coursesCollection = await courses();
+
+  //check if the provided studentId is a valid ObjectId
+  if (!ObjectId.isValid(courseId)) throw 'Provided ID not proper format for ObjectID!';
+  //convert the ID string to an ObjectID
+  let objId = ObjectId(courseId);
+
+  //retrieve the original course information
+  let tempCourse = await coursesCollection.findOne({ _id: objId });
+
+  //the above call will result in null if the given ID doesn't exist in the database
+  if (tempCourse === null) throw 'Course with that ID is not in database!';
+
+  //Make sure there's at least 1 assignment in the course's "assignments" array
+  if (tempCourse.assignments.length == 0) throw 'Cannot remove an assignment from a course with no assignments!';
+
+  //boolean to track if the assignment was found in the course's "assignments" array
+  let found = false;
+
+  //find the course in the user's "classes" array
+  for (let assignment of tempCourse.assignments) {
+    assignmentIdStr = assignment._id.toString()
+    if (assignmentIdStr == assignmentId) {
+      found = true;
+      //edge case: user is dropping the only assignment created
+      if (tempCourse.assignments.length == 1) tempCourse.assignments.pop();
+      //otherwise, remove the assignment from the array
+      else {
+        let ind = tempCourse.assignments.indexOf(assignment);
+        tempCourse.assignments.splice(ind, 1);
+      }
+    }
+  }
+
+  //Throw an error when trying to drop a student that the course didn't have enrolled
+  if (found == false) throw 'Assignment does not exist!';
+
+  //"push" the updated course info to the same ID in the database
+  const updatedInfo = await coursesCollection.updateOne({ _id: objId }, { $set: tempCourse });
+
+  //check that the update succeeded
+  if (updatedInfo.modifiedCount === 0) throw 'Failed to remove student from course!';
+
+  //upon successful removal, return the name of the course for output
+  return tempCourse.name;
+}
+
+//Note: Takes in courseId and assignmentId as strings.
+async function editAssignmentDescription(courseId, assignmentId, newDescription) {
+  //error check inputs
+  error.str(courseId);
+  error.str(assignmentId);
+  error.str(newDescription)
+
+  //retrieve the courses collection
+  const coursesCollection = await courses();
+
+  //check if the provided studentId is a valid ObjectId
+  if (!ObjectId.isValid(courseId)) throw 'Provided ID not proper format for ObjectID!';
+  //convert the ID string to an ObjectID
+  let objId = ObjectId(courseId);
+
+  //retrieve the original course information
+  let tempCourse = await coursesCollection.findOne({ _id: objId });
+
+  //the above call will result in null if the given ID doesn't exist in the database
+  if (tempCourse === null) throw 'Course with that ID is not in database!';
+
+  //Make sure there's at least 1 assignment in the course's "assignments" array
+  if (tempCourse.assignments.length == 0) throw 'Cannot remove an assignment from a course with no assignments!';
+
+  //boolean to track if the assignment was found in the course's "assignments" array
+  let found = false;
+
+  //find the course in the user's "classes" array
+  let ind = null
+  for (let assignment of tempCourse.assignments) {
+    assignmentIdStr = assignment._id.toString()
+    if (assignmentIdStr == assignmentId) {
+      found = true;
+      //edge case: user is dropping the only assignment created
+      ind = tempCourse.assignments.indexOf(assignment);
+    }
+  }
+
+  //Throw an error when trying to drop a student that the course didn't have enrolled
+  if (found == false) throw 'Assignment does not exist!';
+
+  tempCourse.assignments[ind].description = newDescription
+
+  //"push" the updated course info to the same ID in the database
+  const updatedInfo = await coursesCollection.updateOne({ _id: objId }, { $set: tempCourse });
+
+  //check that the update succeeded
+  if (updatedInfo.modifiedCount === 0) throw 'Failed to remove student from course!';
+
+  //upon successful removal, return the name of the course for output
+  return tempCourse.name;
+}
+
 //Note: Takes in courseId and teacherId as strings.
 async function removeTeacher(courseId, teacherId) {
   //error check inputs
@@ -247,5 +389,7 @@ module.exports = {
   addStudent,
   removeStudent,
   removeTeacher,
-  createAssignment
+  createAssignment,
+  removeAssignment,
+  editAssignmentDescription
 };
