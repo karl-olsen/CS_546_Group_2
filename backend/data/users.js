@@ -322,6 +322,25 @@ async function fetchGrade(assignmentId, studentId) {
   }
 }
 
+/**
+ * Fetch all grades for the assignment
+ * @param {string} assignmentId 
+ * @returns array
+ */
+async function fetchAllGrades(assignmentId) {
+  const userCollection = await users();
+  error.validId(assignmentId);
+  const grades = await userCollection.aggregate([
+    { $match: { 'classes': { $elemMatch: { 'grades': { $elemMatch: { _id: assignmentId } } } } } },
+    { $unwind: "$classes" },
+    { $unwind: "$classes" },
+    { $unwind: "$classes.grades" },
+    { $project: { _id: 0, firstName: 1, lastName: 1, grade: "$classes.grades.grade" } }
+  ]).toArray();
+  if (grades.length === 0) throw new Error('No grades found for the assignment');
+  return grades;
+}
+
 module.exports = {
   getUser,
   createUser,
@@ -333,5 +352,6 @@ module.exports = {
   doesEmailExist,
   hashPassword,
   addGrade,
-  fetchGrade
+  fetchGrade,
+  fetchAllGrades,
 };
