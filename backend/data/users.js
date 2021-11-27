@@ -286,9 +286,9 @@ async function addGrade(studentId, courseId, assignmentId, grade) {
     $and: [{ _id: parsedStudentId }, { 'classes.grades._id': parsedAssignmentId }],
   };
 
-  // UPDATE DOES NOT SET THE GRADE FOR THE SPECIFIC GRADE ID
-  // NOT SURE WHAT CAN BE DONE YET
-  // MUST TRIGGER A REGRADE
+  // TODO:
+  // Must trigger a regrade on the student
+  // However the current query does not update the grade object found by the query.
 
   //"push" the updated course info to the same ID in the database
   const updatedInfo = await userCollection.updateOne(query, { $set: { grade: parsedGrade } });
@@ -299,21 +299,19 @@ async function addGrade(studentId, courseId, assignmentId, grade) {
   return { gradeAdded: true };
 }
 
-async function submitAssignment(studentId, assignmentId, fileId, courseId) {
-  error.str(studentId);
-  error.str(assignmentId);
-  error.str(fileId);
-  error.str(courseId);
+async function submitAssignment(studentId, assignmentId, fileId) {
   const parsedStudentId = error.validId(studentId);
   const parsedAssignmentId = error.validId(assignmentId);
   const parsedFileId = error.validId(fileId);
-  const parsedCourseId = error.validId(courseId);
 
+  // 1: Ensure the user is a student
   const userObj = await getUser(parsedStudentId);
   if (!userObj || userObj?.role !== 'student') throw new Error('Students are only allowed to upload assignments');
 
-  // TODO:
-  // Ensure assignment is in course
+  // 2: Ensure assignment is in course
+  const coursesCollection = await courses();
+  const courseQuery = await coursesCollection.findOne({ 'assignments._id': parsedAssignmentId });
+  if (!courseQuery) throw new Error('No course found for provided assignment id');
 
   let modified = false;
   let overwritten = false;
@@ -321,8 +319,8 @@ async function submitAssignment(studentId, assignmentId, fileId, courseId) {
 
   for (let i = 0; i < userObj.classes.length; i++) {
     let currClass = userObj.classes[i];
-    if (currClass._id.toString() === parsedCourseId.toString()) {
-      // then we have the current class
+    if (currClass._id.toString() === courseQuery._id.toString()) {
+      // If we found the current class
       matchedIndex = i;
       for (let j = 0; j < currClass.grades.length; j++) {
         // Check if assignment already has a submission
@@ -337,9 +335,11 @@ async function submitAssignment(studentId, assignmentId, fileId, courseId) {
     }
   }
 
-  // Ensure student is enrolled in course
+  // 3: Ensure student is enrolled in course
   if (!modified) throw new Error('Unable to add new submission due to no student enrolled');
 
+  // 4: If we didn't overwrite a previous submission,
+  // make sure to push a new grade entry into the subdocument
   if (!overwritten) {
     const newGrade = {
       _id: parsedAssignmentId,
@@ -350,7 +350,7 @@ async function submitAssignment(studentId, assignmentId, fileId, courseId) {
     userObj.classes[matchedIndex].grades.push(newGrade);
   }
 
-  // Step 3: Update the student's classes array
+  // 5: Update the student's classes array
   const userCollection = await users();
   const submissionResult = await userCollection.updateOne(
     { _id: parsedStudentId },

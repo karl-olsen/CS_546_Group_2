@@ -213,7 +213,7 @@ async function removeAssignment(courseId, assignmentId) {
 
   //find the course in the user's "classes" array
   for (let assignment of tempCourse.assignments) {
-    assignmentIdStr = assignment._id.toString()
+    assignmentIdStr = assignment._id.toString();
     if (assignmentIdStr == assignmentId) {
       found = true;
       //edge case: user is dropping the only assignment created
@@ -244,7 +244,7 @@ async function editAssignmentDescription(courseId, assignmentId, newDescription)
   //error check inputs
   error.str(courseId);
   error.str(assignmentId);
-  error.str(newDescription)
+  error.str(newDescription);
 
   //retrieve the courses collection
   const coursesCollection = await courses();
@@ -267,9 +267,9 @@ async function editAssignmentDescription(courseId, assignmentId, newDescription)
   let found = false;
 
   //find the course in the user's "classes" array
-  let ind = null
+  let ind = null;
   for (let assignment of tempCourse.assignments) {
-    assignmentIdStr = assignment._id.toString()
+    assignmentIdStr = assignment._id.toString();
     if (assignmentIdStr == assignmentId) {
       found = true;
       //edge case: user is dropping the only assignment created
@@ -280,7 +280,7 @@ async function editAssignmentDescription(courseId, assignmentId, newDescription)
   //Throw an error when trying to drop a student that the course didn't have enrolled
   if (found == false) throw 'Assignment does not exist!';
 
-  tempCourse.assignments[ind].description = newDescription
+  tempCourse.assignments[ind].description = newDescription;
 
   //"push" the updated course info to the same ID in the database
   const updatedInfo = await coursesCollection.updateOne({ _id: objId }, { $set: tempCourse });
@@ -390,9 +390,6 @@ module.exports = {
   removeStudent,
   removeTeacher,
   createAssignment,
-<<<<<<< HEAD
-=======
   removeAssignment,
-  editAssignmentDescription
->>>>>>> main
+  editAssignmentDescription,
 };
