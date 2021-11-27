@@ -10,7 +10,7 @@ const error = require('../error');
 // However it breaks the upload.js functionality as
 // we don't get back the id anymore
 
-router.post('/', auth, async (req, res) => {
+router.post('/', auth, multer().any(), async (req, res) => {
   try {
     const userBody = req.body;
     // Hardcoding for testing this works
