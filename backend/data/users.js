@@ -270,6 +270,14 @@ async function getCourse(id) {
   return course;
 }
 
+/**
+ * Add grade for assignment
+ * @param {string} studentId 
+ * @param {string} courseId 
+ * @param {string} assignmentId 
+ * @param {string} grade 
+ * @returns object
+ */
 async function addGrade(studentId, courseId, assignmentId, grade) {
   error.str(studentId);
   const parsedStudentId = error.validId(studentId);
@@ -288,12 +296,11 @@ async function addGrade(studentId, courseId, assignmentId, grade) {
   if (!classObj.grades.some((e) => e._id === assignmentId)) throw new Error('No assignment found for the user');
   if (grade < 0 || grade > 100) throw new Error('Grade should be betwenn 0 - 100');
 
-  const query = {
-    $and: [{ _id: parsedStudentId }, { 'grades._id': parsedAssignmentId }],
-  };
-
-  //"push" the updated course info to the same ID in the database
-  const updatedInfo = await userCollection.updateOne(query, { $set: { grade: parsedGrade } });
+  const updatedInfo = await userCollection.findOneAndUpdate(
+    { _id: parsedStudentId },
+    { $set: { "classes.$[classId].grades.$[assign].grade": parsedGrade } },
+    { arrayFilters: [{ 'classId._id': courseId }, { 'assign._id': assignmentId }] }
+  );
 
   //check that the update succeeded
   if (updatedInfo.modifiedCount === 0) throw new Error('Failed to add grade for assignment');

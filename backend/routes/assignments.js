@@ -137,6 +137,7 @@ router.get('/grades/:assignmentId', auth, async (req, res) => {
         }
         const response = await userData.fetchGrade(assignmentId, studentId);
         res.status(200).json(response);
+        return;
     } catch (e) {
         if (e.message === 'No assignments found for the given id') {
             res.status(404).json({ error: e.message });
@@ -158,10 +159,11 @@ router.get('/grades/all/:assignmentId', auth, async (req, res) => {
         try {
             error.str(assignmentId);
         } catch (e) {
-            return res.status(400).json({ e: e.message });
+            return res.status(400).json({ error: e.message });
         }
         const response = await userData.fetchAllGrades(assignmentId);
         res.status(200).json({ "status": "success", "grades": response });
+        return;
     } catch (error) {
         if (error.message === 'No grades found for the assignment') {
             res.status(404).json({ error: error.message });
@@ -169,6 +171,39 @@ router.get('/grades/all/:assignmentId', auth, async (req, res) => {
             res.status(500).json({ error: error.message });
         }
 
+    }
+})
+
+/**
+ * Set grade for assignment
+ * Route: PUT
+ * Params: assignmentId
+ * Body Params: teacherId, studentId, grade, courseId
+ */
+router.put('/grades/:assignmentId', auth, async (req, res) => {
+    const assignmentId = req.params.assignmentId;
+    const { teacherId, studentId, grade, courseId } = req.body;
+    try {
+        try {
+            error.str(assignmentId);
+            error.str(teacherId);
+            error.str(studentId);
+            error.str(grade)
+        } catch (e) {
+            return res.status(400).json({ erro: e.message });
+        }
+
+        const user = await userData.getUser(teacherId)
+        if (user.role !== "teacher") {
+            return res.status(403).json({ error: "Only teachers can modify grade" });
+        }
+
+        const response = await userData.addGrade(studentId, courseId, assignmentId, grade);
+        res.status(200).json(response);
+        return;
+
+    } catch (error) {
+        res.status(500).json({ error: error.message });
     }
 })
 
