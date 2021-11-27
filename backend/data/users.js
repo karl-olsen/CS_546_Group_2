@@ -333,12 +333,28 @@ async function submissionExists(studentId, assignmentId) {
   // First we need to delete the file metadata
   const assignmentsFilesCollection = await assignmentsFiles();
   const filesQuery = await assignmentsFilesCollection.deleteMany({ _id: fileId });
-  if (!filesQuery || !filesQuery.deletedCount === 0) throw new Error(`Failed to delete assignment file metadata`);
+  if (!filesQuery || filesQuery.deletedCount === 0) throw new Error(`Failed to delete assignment file metadata`);
 
   // Then delete the file metadata
   const assignmentsChunksCollection = await assignmentsChunks();
   const chunksQuery = await assignmentsChunksCollection.deleteMany({ files_id: fileId });
   if (!chunksQuery || chunksQuery.deletedCount === 0) throw new Error(`Failed to delete assignment chunks`);
+
+  return true;
+}
+
+async function deleteFileInstanceById(fileId) {
+  const parsedFileId = error.validId(fileId);
+
+  // First we need to delete the file metadata
+  const assignmentsFilesCollection = await assignmentsFiles();
+  const filesQuery = await assignmentsFilesCollection.deleteMany({ _id: parsedFileId });
+  if (!filesQuery || filesQuery.deletedCount === 0) return false;
+
+  // Then delete the file metadata
+  const assignmentsChunksCollection = await assignmentsChunks();
+  const chunksQuery = await assignmentsChunksCollection.deleteMany({ files_id: parsedFileId });
+  if (!chunksQuery || chunksQuery.deletedCount === 0) return false;
 
   return true;
 }
@@ -352,7 +368,7 @@ async function submitAssignment(studentId, assignmentId, fileId) {
   const userObj = await getUser(parsedStudentId);
   if (!userObj || userObj?.role !== 'student') throw new Error('Students are only allowed to upload assignments');
 
-  // 2: Ensure assignment is in course
+  // 2: Ensure assignment is in a course
   const coursesCollection = await courses();
   const courseQuery = await coursesCollection.findOne({ 'assignments._id': parsedAssignmentId });
   if (!courseQuery) throw new Error('No course found for provided assignment id');
@@ -364,7 +380,7 @@ async function submitAssignment(studentId, assignmentId, fileId) {
   for (let i = 0; i < userObj.classes.length; i++) {
     let currClass = userObj.classes[i];
     if (currClass._id.toString() === courseQuery._id.toString()) {
-      // If we found the current class
+      // Check that the student's enrolled course matches the assignment's course
       matchedIndex = i;
       for (let j = 0; j < currClass.grades.length; j++) {
         // Check if assignment already has a submission
@@ -383,7 +399,7 @@ async function submitAssignment(studentId, assignmentId, fileId) {
   if (!modified) throw new Error('Unable to add new submission due to no student enrolled');
 
   // 4: If we didn't overwrite a previous submission,
-  // make sure to push a new grade entry into the subdocument
+  // Push a new grade entry into the sub-document
   if (!overwritten) {
     const newGrade = {
       _id: parsedAssignmentId,
@@ -404,7 +420,7 @@ async function submitAssignment(studentId, assignmentId, fileId) {
     throw new Error(`Unable to update classes for student submission`);
   }
 
-  return { overwritten, uploaded: true };
+  return { overwritten, modifiedCount: submissionResult.modifiedCount };
 }
 
 module.exports = {
@@ -419,4 +435,5 @@ module.exports = {
   submitAssignment,
   hashPassword,
   addGrade,
+  deleteFileInstanceById,
 };

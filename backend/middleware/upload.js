@@ -18,8 +18,7 @@ const storage = new GridFsStorage({
     const match = ['application/pdf', 'image/png', 'image/jpeg'];
 
     if (match.indexOf(file.mimetype) === -1) {
-      const filename = `${Date.now()}-ezel-${file.originalname}`;
-      return filename;
+      throw new Error(`You must upload PDF, PNG, or JPEG only.`);
     }
 
     return {
