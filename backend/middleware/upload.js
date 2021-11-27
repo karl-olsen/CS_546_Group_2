@@ -10,7 +10,6 @@ const storage = new GridFsStorage({
 
   file: (req, file) => {
     const userBody = req.body;
-    console.log(userBody);
     error.str(userBody?.studentId);
     error.validId(userBody?.studentId);
     error.str(userBody?.assignmentId);

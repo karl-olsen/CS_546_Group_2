@@ -299,6 +299,50 @@ async function addGrade(studentId, courseId, assignmentId, grade) {
   return { gradeAdded: true };
 }
 
+async function submissionExists(studentId, assignmentId) {
+  const parsedStudentId = error.validId(studentId);
+  const parsedAssignmentId = error.validId(assignmentId);
+
+  // Step 1: Find if student and assignment id exist with data object
+  const userCollection = await users();
+
+  const submissionQuery = await userCollection
+    .aggregate([
+      { $match: { _id: parsedStudentId } },
+      { $match: { classes: { $elemMatch: { grades: { $elemMatch: { _id: parsedAssignmentId } } } } } },
+      { $unwind: '$classes' },
+      { $unwind: '$classes.grades' },
+      {
+        $project: {
+          _id: 0,
+          email: 1,
+          submissionFile: '$classes.grades.submissionFile',
+        },
+      },
+    ])
+    .toArray();
+
+  if (!submissionQuery || submissionQuery.length === 0)
+    throw new Error('Cannot check submission state due to no matching student with given assignment id');
+
+  // Step 2: If submission does not exist return false.
+  // Otherwise, remove old submission from assignments bucket and return true
+  const fileId = submissionQuery[0]?.submissionFile;
+  if (!fileId) return false;
+
+  // First we need to delete the file metadata
+  const assignmentsFilesCollection = await assignmentsFiles();
+  const filesQuery = await assignmentsFilesCollection.deleteMany({ _id: fileId });
+  if (!filesQuery || !filesQuery.deletedCount === 0) throw new Error(`Failed to delete assignment file metadata`);
+
+  // Then delete the file metadata
+  const assignmentsChunksCollection = await assignmentsChunks();
+  const chunksQuery = await assignmentsChunksCollection.deleteMany({ files_id: fileId });
+  if (!chunksQuery || chunksQuery.deletedCount === 0) throw new Error(`Failed to delete assignment chunks`);
+
+  return true;
+}
+
 async function submitAssignment(studentId, assignmentId, fileId) {
   const parsedStudentId = error.validId(studentId);
   const parsedAssignmentId = error.validId(assignmentId);
@@ -327,8 +371,8 @@ async function submitAssignment(studentId, assignmentId, fileId) {
         let currGrade = currClass.grades[j];
         if (currGrade._id.toString() === parsedAssignmentId.toString()) {
           // TODO: Delete all necessary old file data from assignments collection
+          overwritten = await submissionExists(parsedStudentId, parsedAssignmentId);
           currGrade.submissionFile = parsedFileId;
-          overwritten = true;
         }
       }
       modified = true;

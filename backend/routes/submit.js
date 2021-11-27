@@ -12,13 +12,14 @@ const error = require('../error');
 
 router.post('/', auth, async (req, res) => {
   try {
+    await upload(req, res);
+    const userBody = req.body;
+    let parsedStudentId;
+    let parsedAssignmentId;
+    let fileInfo;
     try {
       // Test all invalid scenarios; throw 400 if true
-      await upload(req, res);
-      const userBody = req.body;
-      let parsedStudentId;
-      let parsedAssignmentId;
-      let fileInfo;
+      // Redudant but works for now
       error.str(userBody?.studentId);
       parsedStudentId = error.validId(userBody?.studentId);
       error.str(userBody?.assignmentId);
@@ -35,7 +36,7 @@ router.post('/', auth, async (req, res) => {
     const state = await submitAssignment(parsedStudentId, parsedAssignmentId, fileInfo.id);
     const uploadedRes = {
       uploaded: state?.uploaded,
-      overwrote: state?.overwrote,
+      overwritten: state?.overwritten,
       filename: fileInfo?.originalname,
       contentType: fileInfo?.contentType,
       uploadDate: fileInfo?.uploadDate,
