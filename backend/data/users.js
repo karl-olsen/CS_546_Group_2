@@ -279,33 +279,83 @@ async function getCourse(id) {
  * @returns object
  */
 async function addGrade(studentId, courseId, assignmentId, grade) {
-  error.str(studentId);
   const parsedStudentId = error.validId(studentId);
-  error.str(assignmentId);
   const parsedAssignmentId = error.validId(assignmentId);
-  error.str(grade);
+  const parsedCourseId = error.validId(courseId);
   const parsedGrade = parseInt(grade);
 
   const userCollection = await users();
   const user = await getUser(studentId);
+  if (!user) throw new Error('No user was found with the given id');
   const course = await getCourse(courseId);
+  if (!course) throw new Error('No course was found with the given id');
 
-  let classObj = user.classes.find((e) => e._id === courseId);
+  let classObj = user.classes.find((e) => e._id.toString() === courseId);
   if (!classObj) throw new Error('Student is not enrolled in the course');
   if (!course.assignments.some((e) => e._id.toString() === assignmentId)) throw new Error('No assignment found');
-  if (!classObj.grades.some((e) => e._id === assignmentId)) throw new Error('No assignment found for the user');
+  if (!classObj.grades.some((e) => e._id.toString() === assignmentId)) throw new Error('No assignment found for the user');
   if (grade < 0 || grade > 100) throw new Error('Grade should be betwenn 0 - 100');
 
   const updatedInfo = await userCollection.findOneAndUpdate(
     { _id: parsedStudentId },
     { $set: { "classes.$[classId].grades.$[assign].grade": parsedGrade } },
-    { arrayFilters: [{ 'classId._id': courseId }, { 'assign._id': assignmentId }] }
+    { arrayFilters: [{ 'classId._id': parsedCourseId }, { 'assign._id': parsedAssignmentId }] }
   );
 
   //check that the update succeeded
   if (updatedInfo.modifiedCount === 0) throw new Error('Failed to add grade for assignment');
+  const overallGradeset = await setOverallGrade(studentId, courseId);
+  if (!overallGradeset) throw new Error('Unable to calculate overall grade');
+  return { "gradeAdded": true };
+}
 
-  return { gradeAdded: true };
+/**
+ * Calculate overall grade
+ * @param {string} studentId 
+ * @param {string} courseId 
+ * @returns object
+ */
+async function setOverallGrade(studentId, courseId) {
+  error.str(studentId);
+  const parsedStudentId = error.validId(studentId);
+  error.str(courseId);
+  const parsedCourseId = error.validId(courseId);
+
+  const userCollection = await users();
+  const user = await getUser(studentId);
+  if (!user) throw new Error('No user was found with the given id');
+  const course = await getCourse(courseId);
+  if (!course) throw new Error('No course was found with the given id');
+
+  let classObj = user.classes.find((e) => e._id.toString() === courseId);
+  if (!classObj) throw new Error('Student is not enrolled in the course');
+
+  let overallGrade = 0;
+  if (classObj.grades.length === 0) {
+    overallGrade = 0;
+  } else {
+    let sum = 0;
+    let count = 0;
+    for (const grade of classObj.grades) {
+      if (grade.grade) {
+        sum += grade.grade;
+        count += 1;
+      }
+
+    }
+    overallGrade = Math.round(sum / count * 1e2) / 1e2;
+  }
+
+  if (classObj.overallGrade != overallGrade) {
+    const updatedInfo = await userCollection.findOneAndUpdate(
+      { _id: parsedStudentId, classes: { $elemMatch: { _id: parsedCourseId } } },
+      { $set: { "classes.$.overallGrade": overallGrade } },
+    );
+    if (updatedInfo.modifiedCount === 0) throw new Error('Failed to compute overall grade');
+  }
+
+  return { "serOverallGrade": true }
+
 }
 
 /**
@@ -315,15 +365,18 @@ async function addGrade(studentId, courseId, assignmentId, grade) {
  * @returns object
  */
 async function fetchGrade(assignmentId, studentId) {
-  const errorMSg = 'No assignments found for the given assignment id';
+  const parsedAssignmentId = error.validId(assignmentId);
   const user = await getUser(studentId);
+  if (!user) throw new Error('No user was found with the given id');
+  const errorMSg = 'No assignments found for the given assignment id';
+
   if (user && !user.classes) throw new Error(errorMSg);
   for (const classObj of user.classes) {
-    const assignment = classObj.grades.find((e) => e._id === assignmentId);
+    const assignment = classObj.grades.find((e) => e._id.toString() === assignmentId);
     if (!assignment) throw new Error(errorMSg);
     const response = {
-      status: "success",
-      grade: assignment.grade
+      "status": "success",
+      "grade": assignment.grade
     }
     return response;
   }
@@ -336,16 +389,58 @@ async function fetchGrade(assignmentId, studentId) {
  */
 async function fetchAllGrades(assignmentId) {
   const userCollection = await users();
-  error.validId(assignmentId);
+  const parsedAssignmentId = error.validId(assignmentId);
   const grades = await userCollection.aggregate([
-    { $match: { 'classes': { $elemMatch: { 'grades': { $elemMatch: { _id: assignmentId } } } } } },
+    { $match: { 'classes': { $elemMatch: { 'grades': { $elemMatch: { _id: parsedAssignmentId } } } } } },
     { $unwind: "$classes" },
     { $unwind: "$classes" },
     { $unwind: "$classes.grades" },
+    { $unwind: "$classes.grades" },
+    { $match: { 'classes.grades._id': parsedAssignmentId } },
     { $project: { _id: 0, firstName: 1, lastName: 1, grade: "$classes.grades.grade" } }
   ]).toArray();
   if (grades.length === 0) throw new Error('No grades found for the assignment');
   return grades;
+}
+
+/**
+ * Fetch minimum, maximum and average for a given assignment
+ * @param {string} assignmentId 
+ * @returns object
+ */
+async function fetchGradeMetrics(assignmentId) {
+  const userCollection = await users();
+  const parsedAssignmentId = error.validId(assignmentId);
+
+  let grades = await userCollection.aggregate([
+    { $match: { 'classes': { $elemMatch: { 'grades': { $elemMatch: { _id: parsedAssignmentId } } } } } },
+    { $unwind: "$classes" },
+    { $unwind: "$classes" },
+    { $unwind: "$classes.grades" },
+    { $match: { 'classes.grades._id': parsedAssignmentId } },
+    { $project: { _id: 0, grade: "$classes.grades.grade" } },
+    { $sort: { 'grade': 1 } }
+  ]).toArray();
+
+  if (grades.length === 0) throw new Error('No assignment found with the given id');
+
+  grades = grades.filter(value => Object.keys(value).length !== 0);
+  if (grades.length === 0) throw new Error('Assignments are yet to be graded');
+
+  let sum = 0;
+  for (const grade of grades) {
+    sum += grade.grade;
+  }
+  const average = Math.round(sum / grades.length * 1e2) / 1e2;
+  const response = {
+    "status": "success",
+    "grades": {
+      "min": grades[0].grade,
+      "max": grades[grades.length - 1].grade,
+      "average": average
+    }
+  }
+  return response;
 }
 
 module.exports = {
@@ -361,4 +456,5 @@ module.exports = {
   addGrade,
   fetchGrade,
   fetchAllGrades,
+  fetchGradeMetrics
 };

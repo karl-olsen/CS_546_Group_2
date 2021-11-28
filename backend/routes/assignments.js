@@ -207,4 +207,27 @@ router.put('/grades/:assignmentId', auth, async (req, res) => {
     }
 })
 
+/**
+ * Fetch grade metrics
+ * Route: GET
+ * Params: assignmentId
+ */
+router.get('/grades/metrics/:assignmentId', auth, async (req, res) => {
+    const assignmentId = req.params.assignmentId;
+    try {
+        try {
+            error.str(assignmentId);
+        } catch (e) {
+            return res.status(400).json({ erro: e.message });
+        }
+
+        const response = await userData.fetchGradeMetrics(assignmentId);
+        res.status(200).json(response);
+        return;
+
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+})
+
 module.exports = router
