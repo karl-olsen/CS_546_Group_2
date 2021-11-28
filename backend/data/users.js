@@ -343,7 +343,7 @@ async function setOverallGrade(studentId, courseId) {
       }
 
     }
-    overallGrade = Math.round(sum / count * 1e2) / 1e2;
+    if (count > 0) overallGrade = Math.round(sum / count * 1e2) / 1e2;
   }
 
   if (classObj.overallGrade != overallGrade) {
@@ -354,7 +354,7 @@ async function setOverallGrade(studentId, courseId) {
     if (updatedInfo.modifiedCount === 0) throw new Error('Failed to compute overall grade');
   }
 
-  return { "serOverallGrade": true }
+  return { "setOverallGrade": true }
 
 }
 
@@ -400,7 +400,11 @@ async function fetchAllGrades(assignmentId) {
     { $project: { _id: 0, firstName: 1, lastName: 1, grade: "$classes.grades.grade" } }
   ]).toArray();
   if (grades.length === 0) throw new Error('No grades found for the assignment');
-  return grades;
+  const response = {
+    "status": "success",
+    "grades": grades
+  }
+  return response;
 }
 
 /**
