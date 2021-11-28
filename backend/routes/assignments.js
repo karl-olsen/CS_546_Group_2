@@ -8,21 +8,22 @@ const userData = require('../data/users')
 const mongoCollections = require('../config/mongoCollections')
 const users = mongoCollections.users
 let { ObjectId } = require('mongodb')
+const error = require('../error')
 
 async function getUserIDbyEmail(email) {
     const parsedEmail = email.toLowerCase().trim()
-  
+
     const usersCollection = await users()
     const user = await usersCollection.findOne({ email: parsedEmail })
     if (!user) throw new Error(`Either the username or password is invalid`)
-  
+
     return user._id
 }
-  
+
 // route to GET all assignments for a specific course
 // :id is courseID
 router.get('/:id', auth, async (req, res) => {
-  
+
     const id = req.params.id
 
     const userId = await getUserIDbyEmail(req.email)
@@ -32,12 +33,12 @@ router.get('/:id', auth, async (req, res) => {
         const courses = await userData.getCourses(userIdStr)
         courses.forEach((elem) => {
             const elemIdStr = elem._id.toString()
-            if(elemIdStr == id) {
+            if (elemIdStr == id) {
                 res.status(200).json(elem.assignments)
             }
         })
         return
-    } catch(e) {
+    } catch (e) {
         console.log(e)
         res.sendStatus(400)
     }
@@ -53,16 +54,16 @@ router.post('/:id', auth, async (req, res) => {
     const userIdStr = userId.toString()
     const user = await userData.getUser(userIdStr)
 
-    if(user.role !== "teacher") {
+    if (user.role !== "teacher") {
         res.sendStatus(403)
         return
     }
 
     try {
-        const newCourse = await courseData.createAssignment( type, name, description, id )
+        const newCourse = await courseData.createAssignment(type, name, description, id)
         res.status(200).json(newCourse)
         return
-    } catch(e) {
+    } catch (e) {
         console.log(e)
         res.sendStatus(400)
     }
@@ -78,16 +79,16 @@ router.patch('/:id', auth, async (req, res) => {
     const userIdStr = userId.toString()
     const user = await userData.getUser(userIdStr)
 
-    if(user.role !== "teacher") {
+    if (user.role !== "teacher") {
         res.sendStatus(403)
         return
     }
 
     try {
-        await courseData.editAssignmentDescription( courseId, id, description )
-        res.status(200).json({edited: true})
+        await courseData.editAssignmentDescription(courseId, id, description)
+        res.status(200).json({ edited: true })
         return
-    } catch(e) {
+    } catch (e) {
         console.log(e)
         res.sendStatus(400)
     }
@@ -103,19 +104,47 @@ router.delete('/:id', auth, async (req, res) => {
     const userIdStr = userId.toString()
     const user = await userData.getUser(userIdStr)
 
-    if(user.role !== "teacher") {
+    if (user.role !== "teacher") {
         res.sendStatus(403)
         return
     }
 
     try {
-        await courseData.removeAssignment( courseId, id )
-        res.status(200).json({deleted: true})
+        await courseData.removeAssignment(courseId, id)
+        res.status(200).json({ deleted: true })
         return
-    } catch(e) {
+    } catch (e) {
         console.log(e)
         res.sendStatus(400)
     }
+})
+
+/**
+ * Fetch grade for a student with assignmentId
+ * Route: GET
+ * Params: assignmentId
+ * Query: id
+ */
+router.get('/grades/:assignmentId', auth, async (req, res) => {
+    const assignmentId = req.params.assignmentId;
+    const studentId = req.query.id;
+    try {
+        try {
+            error.str(assignmentId);
+            error.str(studentId);
+        } catch (error) {
+            return res.status(400).json({ error: error.message });
+        }
+        const response = await userData.fetchGrade(assignmentId, studentId);
+        res.status(200).json(response);
+    } catch (e) {
+        if (e.message === 'No assignments found for the given id') {
+            res.status(404).json({ error: e.message });
+        } else {
+            res.status(500).json({ error: e.message });
+        }
+    }
+
 })
 
 module.exports = router
