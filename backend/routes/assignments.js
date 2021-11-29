@@ -162,7 +162,7 @@ router.get('/grades/all/:assignmentId', auth, async (req, res) => {
             return res.status(400).json({ error: e.message });
         }
         const response = await userData.fetchAllGrades(assignmentId);
-        res.status(200).json({ "status": "success", "grades": response });
+        res.status(200).json(response);
         return;
     } catch (error) {
         if (error.message === 'No grades found for the assignment') {
@@ -180,7 +180,7 @@ router.get('/grades/all/:assignmentId', auth, async (req, res) => {
  * Params: assignmentId
  * Body Params: teacherId, studentId, grade, courseId
  */
-router.put('/grades/:assignmentId', auth, async (req, res) => {
+router.patch('/grades/:assignmentId', auth, async (req, res) => {
     const assignmentId = req.params.assignmentId;
     const { teacherId, studentId, grade, courseId } = req.body;
     try {
