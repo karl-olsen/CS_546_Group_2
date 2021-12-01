@@ -37,7 +37,6 @@ router.post('/', auth, async (req, res) => {
         };
         
         res.status(200).json(newEnroll);
-        console.log(studentName + ' has enrolled in ' + courseName + '!');
         return;
     } catch(e) {
         console.log(e);

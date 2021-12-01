@@ -20,13 +20,9 @@ async function getRole(userId)  {
 }
 
 //Route to get all courses the user is enrolled in or teaching
-router.get('/', auth, async (req, res) => {
-    //should NOT need to check role - can be accessed equally by Students and Teachers
-
-    const { userId } = req.body
-
+router.get('/:id', auth, async (req, res) => {
     try {
-        let result = await userData.getCourses(userId);
+        let result = await userData.getCourses(req.params.id);
 
         res.status(200).json(result);
         return;
@@ -54,7 +50,6 @@ router.post('/', auth, async (req, res) => {
         };
         res.status(200).json(newCourse);
 
-        console.log('Course ' + courseName + ' has been added with teacher ID: ' + teacherIds + '!');
         return;
     } catch(e) {
         console.log(e);
@@ -75,7 +70,6 @@ router.patch('/', auth, async (req, res) => {
         let teacherName = await userData.addCourse(courseId, userId);
 
         res.status(200).json({added: true});
-        console.log(teacherName + ' has been added to teach ' + courseName + '!');
     } catch(e) {
         console.log(e);
         res.sendStatus(400);
