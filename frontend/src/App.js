@@ -9,6 +9,8 @@ function App() {
     <exportedObj.AuthProvider>
       <Routes>
         <Route path="/login" element={<Login />} />
+        {/* Since auth doesnt work yet you can just test it by following it here */}
+
         <Route element={<Layout />}>
           <Route
             path="/"
@@ -26,6 +28,7 @@ function App() {
               </exportedObj.RequireAuth>
             }
           />
+          {/* Put the rest of your auth routes here follow the syntax */}
         </Route>
       </Routes>
     </exportedObj.AuthProvider>
