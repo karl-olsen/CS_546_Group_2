@@ -4,7 +4,8 @@ const enrollRoute = require('./enroll');
 const dropRoute = require('./drop');
 const registerRoutes = require('./register');
 const logoutRoutes = require('./logout');
-const assignmentsRoute = require('./assignments')
+const submitRoutes = require('./submit');
+const assignmentsRoute = require('./assignments');
 
 const constructorMethod = (app) => {
   app.get('/', (req, res) => {
@@ -17,7 +18,8 @@ const constructorMethod = (app) => {
   app.use('/drop', dropRoute);
   app.use('/register', registerRoutes);
   app.use('/logout', logoutRoutes);
-  app.use('/assignments', assignmentsRoute)
+  app.use('/submit', submitRoutes);
+  app.use('/assignments', assignmentsRoute);
 
   app.use('*', (req, res) => {
     res.status(404).json({ error: 'Page not found' });

@@ -10,9 +10,11 @@ async function createCourse(courseName, teacherIds) {
   error.str(courseName);
   error.arr(teacherIds, true);
 
+  const parsedTeacherIds = teacherIds.map((id) => error.validId(id));
+
   const newCourse = {
     name: courseName,
-    teachers: teacherIds,
+    teachers: parsedTeacherIds,
     students: [],
     assignments: [],
   };
@@ -31,29 +33,26 @@ async function addTeacher(courseId, teacherId) {
   //error check inputs
   error.str(courseId);
   error.str(teacherId);
+  const parsedCourseId = error.validId(courseId);
+  const parsedTeacherId = error.validId(teacherId);
 
   //retrieve the courses collection
   const coursesCollection = await courses();
 
-  //check if the provided courseId is a valid ObjectId
-  if (!ObjectId.isValid(courseId)) throw 'Provided ID not proper format for ObjectID!';
-  //convert the ID string to an ObjectID
-  let objId = ObjectId(courseId);
-
   //retrieve the original course information
-  let tempCourse = await coursesCollection.findOne({ _id: objId });
+  let tempCourse = await coursesCollection.findOne({ _id: parsedCourseId });
 
   //the above call will result in null if the given ID doesn't exist in the database
-  if (tempCourse === null) throw 'Course with that ID is not in database!';
+  if (!tempCourse) throw 'Course with that ID is not in database!';
 
   //if the teacher already teaches the respective course, throw an error
-  if (tempCourse.teachers.includes(teacherId)) throw 'Teacher is already assigned to that course!';
+  if (tempCourse.teachers.includes(parsedTeacherId)) throw 'Teacher is already assigned to that course!';
 
   //push the provided teacherId to the tempCourse's teachers array
-  tempCourse.teachers.push(teacherId);
+  tempCourse.teachers.push(parsedTeacherId);
 
   //"push" the updated course info to the same ID in the database
-  const updatedInfo = await coursesCollection.updateOne({ _id: objId }, { $set: tempCourse });
+  const updatedInfo = await coursesCollection.updateOne({ _id: parsedCourseId }, { $set: tempCourse });
 
   //check that the update succeeded
   if (updatedInfo.modifiedCount === 0) throw 'Failed to add teacher!';
@@ -68,29 +67,26 @@ async function addStudent(courseId, studentId) {
   //error check inputs
   error.str(courseId);
   error.str(studentId);
+  const parsedCourseId = error.validId(courseId);
+  const parsedStudentId = error.validId(studentId);
 
   //retrieve the courses collection
   const coursesCollection = await courses();
 
-  //check if the provided courseId is a valid ObjectId
-  if (!ObjectId.isValid(courseId)) throw 'Provided ID not proper format for ObjectID!';
-  //convert the ID string to an ObjectID
-  let objId = ObjectId(courseId);
-
   //retrieve the original course information
-  let tempCourse = await coursesCollection.findOne({ _id: objId });
+  let tempCourse = await coursesCollection.findOne({ _id: parsedCourseId });
 
   //the above call will result in null if the given ID doesn't exist in the database
-  if (tempCourse === null) throw 'Course with that ID is not in database!';
+  if (!tempCourse) throw 'Course with that ID is not in database!';
 
   //if the student already teaches the respective course, throw an error
-  if (tempCourse.students.includes(studentId)) throw 'Student is already enrolled in that course!';
+  if (tempCourse.students.includes(parsedStudentId)) throw 'Student is already enrolled in that course!';
 
   //push the provided studentId to the tempCourse's students array
-  tempCourse.students.push(studentId);
+  tempCourse.students.push(parsedStudentId);
 
   //"push" the updated course info to the same ID in the database
-  const updatedInfo = await coursesCollection.updateOne({ _id: objId }, { $set: tempCourse });
+  const updatedInfo = await coursesCollection.updateOne({ _id: parsedCourseId }, { $set: tempCourse });
 
   //check that the update succeeded
   if (updatedInfo.modifiedCount === 0) throw 'Failed to add student!';
@@ -217,7 +213,7 @@ async function removeAssignment(courseId, assignmentId) {
 
   //find the course in the user's "classes" array
   for (let assignment of tempCourse.assignments) {
-    assignmentIdStr = assignment._id.toString()
+    assignmentIdStr = assignment._id.toString();
     if (assignmentIdStr == assignmentId) {
       found = true;
       //edge case: user is dropping the only assignment created
@@ -248,7 +244,7 @@ async function editAssignmentDescription(courseId, assignmentId, newDescription)
   //error check inputs
   error.str(courseId);
   error.str(assignmentId);
-  error.str(newDescription)
+  error.str(newDescription);
 
   //retrieve the courses collection
   const coursesCollection = await courses();
@@ -271,9 +267,9 @@ async function editAssignmentDescription(courseId, assignmentId, newDescription)
   let found = false;
 
   //find the course in the user's "classes" array
-  let ind = null
+  let ind = null;
   for (let assignment of tempCourse.assignments) {
-    assignmentIdStr = assignment._id.toString()
+    assignmentIdStr = assignment._id.toString();
     if (assignmentIdStr == assignmentId) {
       found = true;
       //edge case: user is dropping the only assignment created
@@ -284,7 +280,7 @@ async function editAssignmentDescription(courseId, assignmentId, newDescription)
   //Throw an error when trying to drop a student that the course didn't have enrolled
   if (found == false) throw 'Assignment does not exist!';
 
-  tempCourse.assignments[ind].description = newDescription
+  tempCourse.assignments[ind].description = newDescription;
 
   //"push" the updated course info to the same ID in the database
   const updatedInfo = await coursesCollection.updateOne({ _id: objId }, { $set: tempCourse });
@@ -368,19 +364,23 @@ async function createAssignment(type, name, description, courseId) {
   const parsedCourseID = error.validId(courseId);
   const coursesCollection = await courses();
   const course = await getCourse(courseId);
-  const _id = new ObjectId();
+  if (!course) throw new Error('Course does not exist when trying to create assignment');
+  const assignmentId = new ObjectId();
 
   const newAssignment = {
-    _id,
+    _id: assignmentId,
     type,
     name,
     description,
   };
 
-  const updatedInfo = await coursesCollection.updateOne({ _id: parsedCourseID }, { $push: { assignments: newAssignment } });
-  if (updatedInfo.modifiedCount === 0) throw new Error('Failed to addded assignment to the course!');
+  const updatedInfo = await coursesCollection.updateOne(
+    { _id: parsedCourseID },
+    { $push: { assignments: newAssignment } }
+  );
+  if (updatedInfo.modifiedCount === 0) throw new Error('Failed to add assignment to the course!');
 
-  return _id;
+  return assignmentId;
 }
 
 module.exports = {
@@ -391,5 +391,5 @@ module.exports = {
   removeTeacher,
   createAssignment,
   removeAssignment,
-  editAssignmentDescription
+  editAssignmentDescription,
 };

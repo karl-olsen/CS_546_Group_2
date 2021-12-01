@@ -19,4 +19,7 @@ const getCollectionFn = (collection) => {
 module.exports = {
   users: getCollectionFn('users'),
   courses: getCollectionFn('courses'),
+  assignments: getCollectionFn('assignments'),
+  assignmentsChunks: getCollectionFn('assignments.chunks'),
+  assignmentsFiles: getCollectionFn('assignments.files'),
 };
