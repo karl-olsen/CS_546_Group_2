@@ -19,6 +19,20 @@ async function getRole(userId)  {
     return user.role;
 }
 
+
+//Route to get all courses in the database
+router.get('/all', auth, async (req, res) => {
+    try {
+        let allCourses = await courseData.getAllCourses();
+
+        res.status(200).json(allCourses);
+        return;
+    } catch(e) {
+        console.log(e);
+        res.sendStatus(400);
+    }
+});
+
 //Route to get all courses the user is enrolled in or teaching
 router.get('/', auth, async (req, res) => {
     //should NOT need to check role - can be accessed equally by Students and Teachers
@@ -81,5 +95,6 @@ router.patch('/', auth, async (req, res) => {
         res.sendStatus(400);
     }
 });
+
   
 module.exports = router;
