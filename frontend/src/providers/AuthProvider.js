@@ -30,6 +30,8 @@ function AuthProvider({ children }) {
   let signin = async (loginInfo, callback) => {
     return authenticate(loginInfo, () => {
       // setUser(newUser);
+      // We need to get back a token response and save it to our user object
+      // https://www.bezkoder.com/react-hooks-jwt-auth/
       callback();
     });
   };
