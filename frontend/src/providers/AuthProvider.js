@@ -1,4 +1,3 @@
-import { fakeAuthProvider } from './auth';
 import { useLocation, Navigate } from 'react-router-dom';
 import { createContext, useState, useContext } from 'react';
 import axios from 'axios';
@@ -11,7 +10,17 @@ let AuthContext = createContext({
 });
 
 function AuthProvider({ children }) {
-  let [user, setUser] = useState(null);
+  const storedJwt = localStorage.getItem('token');
+  const [jwt, setJwt] = useState(storedJwt || null);
+  const placeholderUser = Object.freeze({
+    authenticated: false,
+    email: null,
+    firstName: null,
+    lastName: null,
+    role: null,
+    token: jwt,
+  });
+  const [user, setUser] = useState(placeholderUser);
 
   const authenticate = async (loginData, callback) => {
     try {
@@ -20,25 +29,49 @@ function AuthProvider({ children }) {
         email,
         password,
       });
-      console.log(res);
-      callback();
+      callback(res);
     } catch (e) {
-      console.log(e);
+      console.error(e);
+    }
+  };
+
+  const unauthenticate = async (callback) => {
+    try {
+      console.log(jwt);
+      const res = await axios.get(`${env?.apiUrl}/logout`);
+      callback(res);
+    } catch (e) {
+      console.error(e);
     }
   };
 
   let signin = async (loginInfo, callback) => {
-    return authenticate(loginInfo, () => {
-      // setUser(newUser);
-      // We need to get back a token response and save it to our user object
-      // https://www.bezkoder.com/react-hooks-jwt-auth/
+    return await authenticate(loginInfo, (res) => {
+      const data = res.data;
+      console.log(data.token);
+      const user = {
+        authenticated: data.authenticated,
+        email: data.email,
+        firstName: data.firstName,
+        lastName: data.lastName,
+        role: data.role,
+        token: data.token,
+      };
+      setUser(user);
+      setJwt(data.token);
+      localStorage.setItem('token', data.token);
       callback();
     });
   };
 
-  let signout = (callback) => {
-    return fakeAuthProvider.signout(() => {
-      setUser(null);
+  let signout = async (callback) => {
+    return await unauthenticate((res) => {
+      const data = res.data;
+      console.log(data);
+      // could add error handling in case fails
+      localStorage.removeItem('token');
+      setJwt(null);
+      setUser(placeholderUser);
       callback();
     });
   };
@@ -56,7 +89,7 @@ function RequireAuth({ children }) {
   let auth = useAuth();
   let location = useLocation();
 
-  if (!auth.user) {
+  if (!auth.user.authenticated) {
     // Redirect them to the /login page, but save the current location they were
     // trying to go to when they were redirected. This allows us to send them
     // along to that page after they login, which is a nicer user experience

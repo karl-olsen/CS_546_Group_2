@@ -30,17 +30,19 @@ function Login() {
   }
 
   return (
-    <form onSubmit={async (e) => await handleSubmit(e)}>
-      <label>
-        Email:
-        <input type="text" onChange={(e) => setEmail(e.target.value)} />
-      </label>
-      <label>
-        Password:
-        <input type="text" onChange={(e) => setPassword(e.target.value)} />
-      </label>
-      <input type="submit" value="Submit" />
-    </form>
+    <div>
+      <form onSubmit={async (e) => await handleSubmit(e)}>
+        <label>
+          Email:
+          <input type="text" onChange={(e) => setEmail(e.target.value)} />
+        </label>
+        <label>
+          Password:
+          <input type="text" onChange={(e) => setPassword(e.target.value)} />
+        </label>
+        <input type="submit" value="Submit" />
+      </form>
+    </div>
   );
 }
 
