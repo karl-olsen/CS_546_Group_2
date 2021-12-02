@@ -1,0 +1,21 @@
+.signup-roles-container {
+  display: grid;
+  place-content: center;
+  padding-bottom: 1em;
+}
+
+.signup-radio-container {
+  display: flex;
+  color: var(--brand-alt);
+}
+
+.signup-radio-wrapper {
+  display: flex;
+  align-items: center;
+}
+
+.signup-radio {
+  cursor: pointer;
+  width: 1.25em;
+  height: 1.25rem;
+}

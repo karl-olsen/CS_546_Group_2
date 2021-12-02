@@ -8,6 +8,7 @@ import env from './env';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.min.css';
 import Logout from './components/Logout/Logout';
+import Signup from './components/Signup/Signup';
 
 axios.interceptors.request.use(
   (config) => {
@@ -30,6 +31,15 @@ function App() {
       <ToastContainer />
       <Routes>
         <Route path="/login" element={<Login />} />
+
+        <Route
+          path="/signup"
+          element={
+            <exportedObj.RequiteUnAuth>
+              <Signup />
+            </exportedObj.RequiteUnAuth>
+          }
+        />
 
         <Route
           path="/logout"
