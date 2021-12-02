@@ -25,6 +25,7 @@ function Login() {
     e.preventDefault();
 
     // Check input fields
+    // display loading spinner
 
     await auth.signin({ email, password }, (res) => {
       // Send them back to the page they tried to visit when they were

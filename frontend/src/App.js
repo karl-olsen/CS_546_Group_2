@@ -7,6 +7,7 @@ import axios from 'axios';
 import env from './env';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.min.css';
+import Logout from './components/Logout/Logout';
 
 axios.interceptors.request.use(
   (config) => {
@@ -29,7 +30,15 @@ function App() {
       <ToastContainer />
       <Routes>
         <Route path="/login" element={<Login />} />
-        {/* Since auth doesnt work yet you can just test it by following it here */}
+
+        <Route
+          path="/logout"
+          element={
+            <exportedObj.RequiteUnAuth>
+              <Logout />
+            </exportedObj.RequiteUnAuth>
+          }
+        />
 
         <Route element={<Layout />}>
           <Route

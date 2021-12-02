@@ -9,7 +9,7 @@ function Dashboard() {
     e.preventDefault();
 
     await auth.signout(() => {
-      navigate('/404');
+      navigate('/logout');
     });
   }
 
