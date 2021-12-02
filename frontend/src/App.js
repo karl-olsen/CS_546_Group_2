@@ -41,14 +41,7 @@ function App() {
           }
         />
 
-        <Route
-          path="/logout"
-          element={
-            <exportedObj.RequiteUnAuth>
-              <Logout />
-            </exportedObj.RequiteUnAuth>
-          }
-        />
+        <Route path="/logout" element={<Logout />} />
 
         <Route element={<Layout />}>
           <Route
