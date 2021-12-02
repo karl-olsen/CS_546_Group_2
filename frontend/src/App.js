@@ -5,6 +5,8 @@ import { Routes, Route, Outlet } from 'react-router-dom';
 import exportedObj from './providers/AuthProvider';
 import axios from 'axios';
 import env from './env';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.min.css';
 
 axios.interceptors.request.use(
   (config) => {
@@ -24,6 +26,7 @@ axios.interceptors.request.use(
 function App() {
   return (
     <exportedObj.AuthProvider>
+      <ToastContainer />
       <Routes>
         <Route path="/login" element={<Login />} />
         {/* Since auth doesnt work yet you can just test it by following it here */}

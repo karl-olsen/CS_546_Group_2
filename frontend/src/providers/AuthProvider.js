@@ -13,7 +13,7 @@ function AuthProvider({ children }) {
   const storedJwt = localStorage.getItem('token');
   const [jwt, setJwt] = useState(storedJwt || null);
   const placeholderUser = Object.freeze({
-    authenticated: false,
+    authenticated: jwt ? true : false,
     email: null,
     firstName: null,
     lastName: null,
@@ -31,24 +31,23 @@ function AuthProvider({ children }) {
       });
       callback(res);
     } catch (e) {
-      console.error(e);
+      callback(e);
     }
   };
 
   const unauthenticate = async (callback) => {
     try {
-      console.log(jwt);
       const res = await axios.get(`${env?.apiUrl}/logout`);
       callback(res);
     } catch (e) {
-      console.error(e);
+      callback(e);
     }
   };
 
   let signin = async (loginInfo, callback) => {
     return await authenticate(loginInfo, (res) => {
       const data = res.data;
-      console.log(data.token);
+      if (!data) return callback(res);
       const user = {
         authenticated: data.authenticated,
         email: data.email,
@@ -60,14 +59,14 @@ function AuthProvider({ children }) {
       setUser(user);
       setJwt(data.token);
       localStorage.setItem('token', data.token);
-      callback();
+      callback(user.authenticated);
     });
   };
 
   let signout = async (callback) => {
     return await unauthenticate((res) => {
       const data = res.data;
-      console.log(data);
+      if (!data) return callback(res);
       // could add error handling in case fails
       localStorage.removeItem('token');
       setJwt(null);
