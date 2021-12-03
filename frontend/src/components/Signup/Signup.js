@@ -31,8 +31,6 @@ function Signup() {
     if (loginData.password === loginData.confirmPassword) {
       // need to handle scenario where email already exists
       // display loading spinner
-      console.log(loginData);
-
       try {
         const { email, password, firstName, lastName, role } = loginData;
         const res = await axios.post(`${env.apiUrl}/register`, {
@@ -47,7 +45,7 @@ function Signup() {
         e.target.reset();
         navigate('/login');
       } catch (e) {
-        notify(e.response.data.error || e.message);
+        notify(e?.response?.data?.error || 'Failed to sign up due to network error.');
       }
     } else {
       notify('Your passwords do not match!');

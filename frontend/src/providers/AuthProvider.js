@@ -12,14 +12,14 @@ let AuthContext = createContext({
 function AuthProvider({ children }) {
   const storedJwt = localStorage.getItem('token');
   const [jwt, setJwt] = useState(storedJwt || null);
-  const placeholderUser = Object.freeze({
+  const placeholderUser = {
     authenticated: jwt ? true : false,
-    email: null,
-    firstName: null,
-    lastName: null,
-    role: null,
+    email: '',
+    firstName: '',
+    lastName: '',
+    role: '',
     token: jwt,
-  });
+  };
   const [user, setUser] = useState(placeholderUser);
 
   const authenticate = async (loginData, callback) => {
@@ -48,18 +48,22 @@ function AuthProvider({ children }) {
     return await authenticate(loginInfo, (res) => {
       const data = res.data;
       if (!data) return callback(res);
-      const user = {
-        authenticated: data.authenticated,
-        email: data.email,
-        firstName: data.firstName,
-        lastName: data.lastName,
-        role: data.role,
-        token: data.token,
-      };
-      setUser(user);
+      console.log(data);
       setJwt(data.token);
       localStorage.setItem('token', data.token);
-      callback(user.authenticated);
+      setUser((prev) => {
+        return {
+          ...prev,
+          authenticated: data.authenticated,
+          email: data.email,
+          firstName: data.firstName,
+          lastName: data.lastName,
+          role: data.role,
+          token: data.token,
+        };
+      });
+      console.warn(user);
+      callback(data.authenticated);
     });
   };
 

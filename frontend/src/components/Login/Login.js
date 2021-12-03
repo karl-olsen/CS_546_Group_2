@@ -40,7 +40,7 @@ function Login() {
       if (res === true) {
         navigate(from, { replace: true });
       } else {
-        notify(res.response.data.error || 'Failed to login');
+        notify(res?.response?.data?.error || 'Unexpected error to login. Please try again.');
       }
     });
   }
