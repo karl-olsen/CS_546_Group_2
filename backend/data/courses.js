@@ -80,7 +80,7 @@ async function addStudent(courseId, studentId) {
   if (!tempCourse) throw 'Course with that ID is not in database!';
 
   //if the student already teaches the respective course, throw an error
-  if (tempCourse.students.includes(parsedStudentId)) throw 'Student is already enrolled in that course!';
+  if (tempCourse.students.some((e) => e.toString() === studentId)) throw 'Student is already enrolled in that course!';
 
   //push the provided studentId to the tempCourse's students array
   tempCourse.students.push(parsedStudentId);
@@ -147,41 +147,6 @@ async function removeStudent(courseId, studentId) {
   if (updatedInfo.modifiedCount === 0) throw 'Failed to remove student from course!';
 
   //upon successful removal, return the name of the course for output
-  return tempCourse.name;
-}
-
-async function addStudent(courseId, studentId) {
-  //error check inputs
-  error.str(courseId);
-  error.str(studentId);
-
-  //retrieve the courses collection
-  const coursesCollection = await courses();
-
-  //check if the provided courseId is a valid ObjectId
-  if (!ObjectId.isValid(courseId)) throw 'Provided ID not proper format for ObjectID!';
-  //convert the ID string to an ObjectID
-  let objId = ObjectId(courseId);
-
-  //retrieve the original course information
-  let tempCourse = await coursesCollection.findOne({ _id: objId });
-
-  //the above call will result in null if the given ID doesn't exist in the database
-  if (tempCourse === null) throw 'Course with that ID is not in database!';
-
-  //if the student already teaches the respective course, throw an error
-  if (tempCourse.students.includes(studentId)) throw 'Student is already enrolled in that course!';
-
-  //push the provided studentId to the tempCourse's students array
-  tempCourse.students.push(studentId);
-
-  //"push" the updated course info to the same ID in the database
-  const updatedInfo = await coursesCollection.updateOne({ _id: objId }, { $set: tempCourse });
-
-  //check that the update succeeded
-  if (updatedInfo.modifiedCount === 0) throw 'Failed to add student!';
-
-  //upon successful add, return the name of the course for output
   return tempCourse.name;
 }
 
