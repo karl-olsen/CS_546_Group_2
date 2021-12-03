@@ -2,7 +2,6 @@ import axios from 'axios';
 import { useNavigate, useLocation } from 'react-router-dom';
 import whiteboard from '../../assets/Courses/whiteboard.png';
 import userIcon from '../../assets/Login/user.svg';
-import lockIcon from '../../assets/Login/lock.svg';
 import { useState } from 'react';
 import exportedObj from '../../providers/AuthProvider';
 import './Create.css';
@@ -11,10 +10,7 @@ import env from '../../env';
 
 function Create() {
   const notify = (message) => toast.error(message);
-
-  let navigate = useNavigate();
   let location = useLocation();
-  let auth = exportedObj.useAuth();
   const user = JSON.parse(localStorage.user)
   const [courseName, setCourseName] = useState('');
   const [isSuccessful, setIsSuccessful] = useState(false);

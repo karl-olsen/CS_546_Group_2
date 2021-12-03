@@ -4,7 +4,6 @@ const express = require('express');
 const router = express.Router();
 const { checkUser, getUser } = require('../data/users');
 const error = require('../error');
-const { getUserByEmail } = require('../data/users');
 
 router.post('/', async (req, res) => {
   try {
