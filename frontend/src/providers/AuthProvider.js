@@ -99,10 +99,23 @@ function RequireAuth({ children }) {
   return children;
 }
 
+function RequiteUnAuth({ children }) {
+  let auth = useAuth();
+  let location = useLocation();
+  let from = location.state?.from?.pathname || '/';
+
+  if (auth.user.authenticated) {
+    return <Navigate to={from} state={{ from: location }} />;
+  }
+
+  return children;
+}
+
 const auth = {
   useAuth,
   AuthProvider,
   RequireAuth,
+  RequiteUnAuth,
 };
 
 export default auth;
