@@ -36,7 +36,6 @@ router.post('/', auth, async (req, res) => {
         let userName = await userData.drop(courseId, userId);
 
         res.status(200).json({dropped: true});
-        console.log(userName + ' has dropped ' + courseName + '!');
         return;
     } catch(e) {
         console.log(e);
