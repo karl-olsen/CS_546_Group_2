@@ -40,7 +40,7 @@ function Login() {
       if (res === true) {
         navigate(from, { replace: true });
       } else {
-        notify('Username or password is invalid.');
+        notify(res.response.data.error || 'Failed to login');
       }
     });
   }
