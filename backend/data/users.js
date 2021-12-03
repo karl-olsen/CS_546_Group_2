@@ -64,7 +64,7 @@ async function checkUser(email, password) {
   const compareToMatch = await bcrypt.compare(password, user?.password);
   if (!compareToMatch) throw new Error('Either the username or password is invalid');
 
-  return { authenticated: true };
+  return { userId: user._id };
 }
 
 //Note: Takes in courseId and studentId as strings.

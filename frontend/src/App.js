@@ -3,10 +3,30 @@ import Navbar from './components/Navbar/Navbar';
 import Dashboard from './components/Dashboard/Dashboard';
 import { Routes, Route, Outlet } from 'react-router-dom';
 import exportedObj from './providers/AuthProvider';
+import axios from 'axios';
+import env from './env';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.min.css';
+
+axios.interceptors.request.use(
+  (config) => {
+    const { origin } = new URL(config.url);
+    const allowedOrigins = [env.apiUrl];
+    const token = localStorage.getItem('token');
+    if (allowedOrigins.includes(origin)) {
+      config.headers.authorization = `${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
 
 function App() {
   return (
     <exportedObj.AuthProvider>
+      <ToastContainer />
       <Routes>
         <Route path="/login" element={<Login />} />
         {/* Since auth doesnt work yet you can just test it by following it here */}
