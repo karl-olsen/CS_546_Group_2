@@ -16,7 +16,6 @@ function Create() {
   let location = useLocation();
   let auth = exportedObj.useAuth();
   const user = JSON.parse(localStorage.user)
-  console.log(user)
   const [courseName, setCourseName] = useState('');
   const [isSuccessful, setIsSuccessful] = useState(false);
 
@@ -35,6 +34,8 @@ function Create() {
   }
 
   return (
+      <>
+    {user.role === 'teacher' ? ( 
     <div className="courses-container">
       <div className="courses-wrapper">
         <div className="courses-bogo">
@@ -81,6 +82,11 @@ function Create() {
         </div>
       </div>
     </div>
+    ) : 
+    <div>
+        403 Unauthorized.
+    </div>}
+    </>
   );
 }
 
