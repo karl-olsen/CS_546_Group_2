@@ -255,6 +255,14 @@ async function getUser(id) {
   return user;
 }
 
+async function getUserByEmail(email) {
+  const parsedEmail = error.validEmail(email);
+  const userCollection = await users();
+  const user = await userCollection.findOne({ email: parsedEmail });
+  if (!user) throw new Error('No user found');
+  return user;
+}
+
 async function getCourse(id) {
   const parsedId = error.validId(id);
   const coursesCollection = await courses();
@@ -589,6 +597,7 @@ async function fetchGradeMetrics(assignmentId) {
 }
 
 module.exports = {
+  getUserByEmail,
   getUser,
   createUser,
   checkUser,

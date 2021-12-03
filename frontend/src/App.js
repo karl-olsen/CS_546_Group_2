@@ -1,5 +1,6 @@
 import Login from './components/Login/Login';
 import Navbar from './components/Navbar/Navbar';
+import Create from './components/Courses/Create';
 import Dashboard from './components/Dashboard/Dashboard';
 import { Routes, Route, Outlet } from 'react-router-dom';
 import exportedObj from './providers/AuthProvider';
@@ -57,6 +58,14 @@ function App() {
             element={
               <exportedObj.RequireAuth>
                 <Dashboard />
+              </exportedObj.RequireAuth>
+            }
+          />
+          <Route
+            path="/courses/create"
+            element={
+              <exportedObj.RequireAuth>
+                <Create />
               </exportedObj.RequireAuth>
             }
           />
