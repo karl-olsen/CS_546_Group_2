@@ -383,23 +383,23 @@ async function createAssignment(type, name, description, courseId) {
   return assignmentId;
 }
 
-async function getAllCourses()  {
+async function getAllCourses() {
   const coursesCollection = await courses();
-  
+
   let result = [];
 
   //loop through each course in the collection
-  await coursesCollection.find().forEach( function(course) {
+  await coursesCollection.find().forEach(function (course) {
     //create a temporary object with the course's ID (in string format) and name, and add that to the array to be returned
-    let tempObj = {courseId: course._id.toString(), courseName: course.name};
+    let tempObj = { courseId: course._id.toString(), courseName: course.name };
     result.push(tempObj);
   });
-
 
   return result;
 }
 
 module.exports = {
+  getCourse,
   createCourse,
   addTeacher,
   addStudent,

@@ -1,0 +1,40 @@
+.courses-assignment-container {
+  display: flex;
+  /* flex-direction: column; */
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  margin: 0;
+  background-color: #fafafa;
+}
+
+.assignments-container {
+  padding: 0 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 80%;
+  border-radius: 15px;
+  margin: auto;
+  height: 100%;
+  background-color: #fafafa;
+}
+
+.bold {
+  font-weight: bold;
+}
+
+.assignment-name {
+  flex: 0 0 35%;
+}
+
+.assignment-type {
+  flex: 0 0 20%;
+}
+
+.assignment-description {
+  flex: 0 0 45%;
+}
