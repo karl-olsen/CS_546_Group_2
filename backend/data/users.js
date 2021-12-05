@@ -86,7 +86,7 @@ async function enroll(courseId, studentId) {
 
   //if the student is already enrolled in the respective course, throw an error
   //NOTE: Shouldn't be necessary, as courses.js' addStudent() function SHOULD catch this case and throw an error first, but including just in case
-  if (tempStudent.classes.some((e) => e._id.toString() === courseId)) throw new Error('Student is already enrolled in that course!');
+  if (tempStudent.classes.some((e) => e.toString() === courseId)) throw 'Student is already enrolled in that course!';
 
   //create new class Object to be added to the student's "classes" array
   const classInfo = {
@@ -319,7 +319,8 @@ async function setOverallGrade(studentId, courseId) {
     let sum = 0;
     let count = 0;
     for (const grade of classObj.grades) {
-      if (grade.grade) {
+      //a grade being -1 indicates a recently-submitted assignment that hasn't been graded yet - omitting from overallGrade calculation
+      if (grade.grade && grade.grade != -1) {
         sum += grade.grade;
         count += 1;
       }
@@ -592,4 +593,5 @@ module.exports = {
   fetchGrade,
   fetchAllGrades,
   fetchGradeMetrics,
+  setOverallGrade
 };
