@@ -49,14 +49,14 @@ router.get('/:id', auth, async (req, res) => {
 //Route to create new course when given a Course Name and array of Teacher IDs
 router.post('/', auth, async (req, res) => {
     
-    const { userId, courseName, teacherIds } = req.body
+    const { userId, courseName } = req.body
 
     let role = await getRole(userId);
 
     try {        
         if(role.toLowerCase() !== 'teacher') throw 'Course creation can ONLY be called by users with Teacher role!';
 
-        await courseData.createCourse(courseName, teacherIds);
+        await courseData.createCourse(courseName, [userId]);
 
         const newCourse = {
             added: true,
