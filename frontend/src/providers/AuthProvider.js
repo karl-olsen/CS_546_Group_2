@@ -11,13 +11,16 @@ let AuthContext = createContext({
 
 function AuthProvider({ children }) {
   const storedJwt = localStorage.getItem('token');
+  let storedUser = localStorage.getItem('user');
+  storedUser = JSON.parse(storedUser);
+
   const [jwt, setJwt] = useState(storedJwt || null);
   const placeholderUser = {
     authenticated: jwt ? true : false,
-    email: '',
-    firstName: '',
-    lastName: '',
-    role: '',
+    email: storedUser?.email ? storedUser.email : '',
+    firstName: storedUser?.firstName ? storedUser.firstName : '',
+    lastName: storedUser?.lastName ? storedUser.lastName : '',
+    role: storedUser?.role ? storedUser.role : '',
     token: jwt,
   };
   const [user, setUser] = useState(placeholderUser);
@@ -51,6 +54,14 @@ function AuthProvider({ children }) {
       console.log(data);
       setJwt(data.token);
       localStorage.setItem('token', data.token);
+      const newUser = {
+        email: data.email,
+        firstName: data.firstName,
+        lastName: data.lastName,
+        role: data.role,
+      };
+      localStorage.setItem('user', JSON.stringify(newUser));
+      // Temporary work around
       setUser((prev) => {
         return {
           ...prev,
@@ -73,6 +84,7 @@ function AuthProvider({ children }) {
       if (!data) return callback(res);
       // could add error handling in case fails
       localStorage.removeItem('token');
+      localStorage.removeItem('user');
       setJwt(null);
       setUser(placeholderUser);
       callback();
