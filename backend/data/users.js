@@ -90,7 +90,7 @@ async function enroll(courseId, studentId) {
 
   //create new class Object to be added to the student's "classes" array
   const classInfo = {
-    _id: parsedCourseId,
+    _id: parsedCourseId.toString(),
     grades: [],
     overallGrade: 0,
   };
@@ -131,7 +131,7 @@ async function addCourseToTeacher(courseId, teacherId) {
 
   //create new class Object to be added to the teacher's "classes" array
   const classInfo = {
-    _id: parsedCourseId,
+    _id: parsedCourseId.toString(),
   };
 
   //push the new class Object to the tempTeacher's classes array

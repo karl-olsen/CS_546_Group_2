@@ -3,6 +3,7 @@ import Navbar from './components/Navbar/Navbar';
 import Create from './components/Courses/Create';
 import Assignments from './components/Courses/Assignments';
 import Dashboard from './components/Dashboard/Dashboard';
+import Courses from './components/Courses/Courses';
 import { Routes, Route, Outlet } from 'react-router-dom';
 import exportedObj from './providers/AuthProvider';
 import axios from 'axios';
@@ -67,6 +68,14 @@ function App() {
             element={
               <exportedObj.RequireAuth>
                 <Create />
+              </exportedObj.RequireAuth>
+            }
+          />
+          <Route
+            path="/courses/:id"
+            element={
+              <exportedObj.RequireAuth>
+                <Courses />
               </exportedObj.RequireAuth>
             }
           />
