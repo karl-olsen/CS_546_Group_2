@@ -1,0 +1,108 @@
+.dashboard-container {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  background-color: #fff;
+  padding-left: 30px;
+  padding-right: 30px;
+}
+
+.grid-container {
+  display: grid;
+  grid-template-columns: auto auto auto auto;
+  grid-gap: 50px;
+  background-color: #fff;
+  padding-top: 30px;
+  padding-bottom: 30px;
+}
+
+.grid-container > a {
+  background-color: rgba(255, 255, 255, 255);
+  padding: 0 0 20px;
+  height: 250px;
+  width: 260px;
+  border-radius: 2px;
+  box-shadow: 2px 2px 2px 2px rgb(0 0 255 / 20%);
+}
+
+.course-element-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.course-element {
+  height: 90px;
+  font-size: 20px;
+  padding-top: 10px;
+  padding-left: 20px;
+}
+
+.course-grade-container {
+  height: 150px;
+  position: relative;
+  padding-top: 10px;
+}
+
+.course-grade-circle {
+  width: 50px;
+  height: 50px;
+  position: absolute;
+  right: 30px;
+  box-shadow: px 0px 0px 0px;
+  background-color: #fff;
+  border-radius: 50%;
+  box-shadow: 0 0 0 3px #e78267;
+  justify-content: center;
+  align-items: center;
+  display: inline-flex;
+}
+
+.dashboard-subHeader {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  border-bottom: 1px solid #c7cdd1;
+  background: rgba(255, 255, 255, 0.95);
+  box-sizing: border-box;
+  height: 4.5rem;
+}
+
+.course-grade-lg0 {
+  background-image: linear-gradient(180deg, #da22ff, #9733ee);
+}
+
+.course-grade-lg1 {
+  background-image: linear-gradient(180deg, #02aab0, #00cdac);
+}
+
+.course-grade-lg2 {
+  background-image: linear-gradient(180deg, #ede574, #e1f5c4);
+}
+
+.course-grade-lg3 {
+  background-image: linear-gradient(180deg, #d31027, #ea384d);
+}
+
+.course-grade-lg4 {
+  background-image: linear-gradient(180deg, #16a085, #f4d03f);
+}
+
+.course-grade-lg5 {
+  background-image: linear-gradient(180deg, #603813, #b29f94);
+}
+
+.course-grade-lg6 {
+  background-image: linear-gradient(180deg, #ff6e7f, #bfe9ff);
+}
+
+.course-grade-lg7 {
+  background-image: linear-gradient(180deg, #314755, #26a0da);
+}
+
+.course-grade-lg8 {
+  background-image: linear-gradient(180deg, #e65c00, #f9d423);
+}
+
+.course-grade-lg9 {
+  background-image: linear-gradient(180deg, #bbd2c5, #536976);
+}

@@ -43,6 +43,7 @@ router.post('/', async (req, res) => {
       role: user?.role,
       id: foundUserIdObj.userId,
       token,
+      _id: user?._id,
     };
     res.status(200).json(response);
   } catch (e) {
