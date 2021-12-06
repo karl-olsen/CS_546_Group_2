@@ -84,7 +84,7 @@ function Courses() {
 
   return (
     <>
-      <div className="courses-container">
+      <div className="courses-container1">
         {!userIsEnrolled && user.role !== 'teacher' ? (
           <>
             <div className="courses-heading-container">
