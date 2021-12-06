@@ -101,7 +101,7 @@ function RequireAuth({ children }) {
   return children;
 }
 
-function RequiteUnAuth({ children }) {
+function RequireUnAuth({ children }) {
   let auth = useAuth();
   let location = useLocation();
   let from = location.state?.from?.pathname || '/';
@@ -117,7 +117,7 @@ const auth = {
   useAuth,
   AuthProvider,
   RequireAuth,
-  RequiteUnAuth,
+  RequireUnAuth,
 };
 
 export default auth;
