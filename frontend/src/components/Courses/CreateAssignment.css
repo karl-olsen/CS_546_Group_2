@@ -1,0 +1,148 @@
+.courses-container {
+    background-color: var(--brand);
+    background-image: url('../../assets/Login/login-background.svg');
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    min-height: 100vh;
+    display: grid;
+  }
+  
+  .courses-bogo {
+    display: grid;
+    place-content: center;
+    padding-bottom: 1em;
+  }
+  
+  .logo-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 30px;
+  }
+  
+  .logo {
+    display: block;
+    width: 60%;
+    object-fit: cover;
+  }
+  
+  .courses-wrapper {
+    display: grid;
+    place-content: center;
+  }
+  
+  .courses-header {
+    font-size: clamp(3rem, 4vw, 5rem);
+    font-weight: 700;
+    color: var(--brand-alt);
+    margin: 0;
+  }
+  
+  .assignment-snackbar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-flow: column nowrap;
+    gap: 0.5em;
+    margin-top: 1em;
+  }
+  
+  .courses-fields-container {
+    display: flex;
+    flex-flow: column nowrap;
+    gap: 0.5em;
+  }
+  
+  .btn-primary {
+    background-color: var(--brand-alt);
+    border: 0;
+    padding: 0.5em;
+    color: var(--brand);
+    font-weight: 600;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: 0.1s ease-in-out filter;
+    filter: brightness(100%);
+    text-transform: uppercase;
+    width: 100%;
+    font-size: clamp(1rem, 1vw, 1.25rem);
+  }
+  
+  .btn-primary:hover {
+    filter: brightness(80%);
+  }
+  
+  .btn-alt {
+    background-color: transparent;
+    border: 0;
+    border-bottom: 1px solid transparent;
+    color: #fff;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+  }
+  
+  .btn-alt:hover {
+    border-bottom: 1px solid var(--brand-alt);
+  }
+  
+  .courses-input {
+    background-color: transparent;
+    color: var(--brand-alt);
+    border: 1px solid var(--brand-alt);
+    border-radius: 4px;
+    padding: 1.5em 0;
+    text-indent: 2.5rem;
+    line-height: inherit;
+    width: 100%;
+    font-family: inherit;
+  }
+  
+  .courses-input::placeholder {
+    color: var(--brand-alt);
+    font-size: 1rem;
+    font-weight: 400;
+  }
+  
+  .visuallyhidden {
+    border: 0;
+    clip: rect(0 0 0 0);
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    padding: 0;
+    position: absolute;
+    width: 1px;
+    color: #fff;
+  }
+  
+  .position-relative {
+    position: relative;
+    width: 100%;
+  }
+  
+  .input-icon {
+    position: absolute;
+    top: 18px;
+    left: 12px;
+  }
+  
+  .courses-heading-container {
+    display: flex;
+    flex-flow: column;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .courses-subheader {
+    color: var(--brand-alt);
+    margin: 0;
+    text-align: center;
+  }
+  
+  .courses-options-container {
+    padding: 1em 0;
+    display: flex;
+    justify-content: center;
+  }
+  

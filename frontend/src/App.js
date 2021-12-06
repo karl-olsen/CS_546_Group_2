@@ -2,6 +2,7 @@ import Login from './components/Login/Login';
 import Navbar from './components/Navbar/Navbar';
 import Create from './components/Courses/Create';
 import Assignments from './components/Courses/Assignments';
+import CreateAssignment from './components/Courses/CreateAssignment';
 import Dashboard from './components/Dashboard/Dashboard';
 import { Routes, Route, Outlet } from 'react-router-dom';
 import exportedObj from './providers/AuthProvider';
@@ -75,6 +76,14 @@ function App() {
             element={
               <exportedObj.RequireAuth>
                 <Assignments />
+              </exportedObj.RequireAuth>
+            }
+          />
+          <Route
+            path="/courses/:id/assignments/create"
+            element={
+              <exportedObj.RequireAuth>
+                <CreateAssignment />
               </exportedObj.RequireAuth>
             }
           />
