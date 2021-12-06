@@ -55,10 +55,12 @@ function AuthProvider({ children }) {
         lastName: data.lastName,
         role: data.role,
         token: data.token,
+        id: data.id,
       };
       setUser(user);
       setJwt(data.token);
       localStorage.setItem('token', data.token);
+      localStorage.setItem('user', JSON.stringify(user));
       callback(user.authenticated);
     });
   };

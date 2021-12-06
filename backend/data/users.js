@@ -229,7 +229,7 @@ async function getCourses(userId) {
     //the above call will result in null if the given ID doesn't exist in the respective database
     if (!foundCourse) throw 'Student has a course whose ID is not in the course database!';
 
-    courseList.push(foundCourse.name);
+    courseList.push(foundCourse);
   }
 
   return courseList;
@@ -239,6 +239,14 @@ async function getUser(id) {
   const parsedId = error.validId(id);
   const userCollection = await users();
   const user = await userCollection.findOne({ _id: parsedId });
+  if (!user) throw new Error('No user found');
+  return user;
+}
+
+async function getUserByEmail(email) {
+  const parsedEmail = error.validEmail(email);
+  const userCollection = await users();
+  const user = await userCollection.findOne({ email: parsedEmail });
   if (!user) throw new Error('No user found');
   return user;
 }
@@ -578,6 +586,7 @@ async function fetchGradeMetrics(assignmentId) {
 }
 
 module.exports = {
+  getUserByEmail,
   getUser,
   createUser,
   checkUser,
