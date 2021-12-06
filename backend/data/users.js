@@ -127,9 +127,7 @@ async function addCourseToTeacher(courseId, teacherId) {
   if (tempTeacher === null) throw 'User with that ID is not in database!';
 
   //if the teacher is already teaching the respective course, throw an error
-  for (let course of tempTeacher.classes) {
-    if (course._id === courseId) throw 'Teacher is already teaching that course!';
-  }
+  if (tempTeacher.classes.some((e) => e._id.toString() === courseId)) throw new Error('Teacher is already teaching this course!');
 
   //create new class Object to be added to the teacher's "classes" array
   const classInfo = {
@@ -158,28 +156,23 @@ async function drop(courseId, userId) {
   //retrieve the users collection
   const userCollection = await users();
 
-  //check if the provided userId is a valid ObjectId
-  if (!ObjectId.isValid(userId)) throw 'Provided ID not proper format for ObjectID!';
-  //convert the ID string to an ObjectID
-  let objId = ObjectId(userId);
+  const parsedCourseId = error.validId(courseId);
+  const parsedUserId = error.validId(userId);
 
   //retrieve the original user information
-  let tempUser = await userCollection.findOne({ _id: objId });
+  let tempUser = await userCollection.findOne({ _id: parsedUserId });
 
   //the above call will result in null if the given ID doesn't exist in the database
-  if (tempUser === null) throw 'User with that ID is not in database!';
+  if(!tempUser) throw 'User with that ID is not in database!';
 
-  //Make sure there's at least 1 course in the user's "classes" array
-  if (tempUser.classes.length == 0) throw "'Cannot drop a course from a user that doesn't have any courses!";
-
-  //boolean to track if the course was found in the user's "classes" array
-  let found = false;
+  //if the student isn't enrolled in the course they're dropping, throw an error
+  if (!tempUser.classes.some((e) => e._id.toString() === courseId)) throw new Error('User cannot drop a course they are not enrolled in or teaching!');
 
   //find the course in the user's "classes" array
   for (let course of tempUser.classes) {
     //once the course has been found
-    if (course._id === courseId) {
-      found = true;
+    //NOTE: checking both string and ObjectId form due to discrepancies in format from seed versions
+    if (course._id == courseId || course._id  == parsedCourseId) {
       //edge case: user is dropping the only class they're enrolled in
       if (tempUser.classes.length == 1) tempUser.classes.pop();
       //otherwise, remove the course from the array
@@ -190,11 +183,8 @@ async function drop(courseId, userId) {
     }
   }
 
-  //Throw an error when trying to drop a course that the user wasn't involved in
-  if (found == false) throw 'User was not enrolled-in or teaching that course!';
-
   //"push" the updated course info to the same ID in the database
-  const updatedInfo = await userCollection.updateOne({ _id: objId }, { $set: tempUser });
+  const updatedInfo = await userCollection.updateOne({ _id: parsedUserId }, { $set: tempUser });
 
   //check that the update succeeded
   if (updatedInfo.modifiedCount === 0) throw 'Failed to drop course!';
