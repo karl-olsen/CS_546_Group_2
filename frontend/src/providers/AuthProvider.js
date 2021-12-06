@@ -19,6 +19,7 @@ function AuthProvider({ children }) {
     lastName: null,
     role: null,
     token: jwt,
+    _id: null,
   });
   const [user, setUser] = useState(placeholderUser);
 
