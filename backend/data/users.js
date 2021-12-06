@@ -135,7 +135,7 @@ async function addCourseToTeacher(courseId, teacherId) {
 
   //create new class Object to be added to the teacher's "classes" array
   const classInfo = {
-    _id: parsedCourseId,
+    _id: parsedCourseId.toString(),
   };
 
   //push the new class Object to the tempTeacher's classes array

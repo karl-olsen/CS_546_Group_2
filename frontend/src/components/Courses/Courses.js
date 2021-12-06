@@ -33,7 +33,11 @@ function Courses() {
       courseId: id,
     };
     try {
-      await axios.post(`${env?.apiUrl}/enroll`, data);
+      if (user.role === 'student') {
+        await axios.post(`${env?.apiUrl}/enroll`, data);
+      } else {
+        await axios.patch(`${env?.apiUrl}/courses`, data);
+      }
       setIsSuccessful(true);
     } catch (error) {
       console.log(error);
@@ -85,7 +89,7 @@ function Courses() {
   return (
     <>
       <div className="courses-container1">
-        {!userIsEnrolled && user.role !== 'teacher' ? (
+        {!userIsEnrolled ? (
           <>
             <div className="courses-heading-container">
               <h1 className="courses-header">Enroll in {courseName}</h1>
@@ -106,7 +110,7 @@ function Courses() {
             </button>
           </>
         )}
-        {isError && <p className="courses-subheader">You are a not a registered teacher in this course!</p>}
+        {isError && <p className="courses-subheader">You are not registered in this course!</p>}
       </div>
     </>
   );

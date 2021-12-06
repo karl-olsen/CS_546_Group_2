@@ -91,7 +91,7 @@ router.patch('/', auth, async (req, res) => {
     if (role.toLowerCase() !== 'teacher') throw 'Teachers can ONLY be added to courses if they have the teacher role!';
 
     let courseName = await courseData.addTeacher(courseId, userId);
-    let teacherName = await userData.addCourse(courseId, userId);
+    let teacherName = await userData.addCourseToTeacher(courseId, userId);
 
     res.status(200).json({ added: true });
   } catch (e) {
