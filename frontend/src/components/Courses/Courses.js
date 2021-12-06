@@ -85,7 +85,7 @@ function Courses() {
   return (
     <>
       <div className="courses-container1">
-        {!userIsEnrolled ? (
+        {!userIsEnrolled && user.role !== 'teacher' ? (
           <>
             <div className="courses-heading-container">
               <h1 className="courses-header">Enroll in {courseName}</h1>
@@ -106,7 +106,7 @@ function Courses() {
             </button>
           </>
         )}
-        {isError && <p className="courses-subheader">Page needs to be refreshed!</p>}
+        {isError && <p className="courses-subheader">You are a not a registered teacher in this course!</p>}
       </div>
     </>
   );
