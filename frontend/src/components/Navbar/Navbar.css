@@ -1,0 +1,40 @@
+.nav-container {
+  display: flex;
+  background-color: #0000b1;
+  color: #fff;
+  width: 100%;
+  height: 50px;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  z-index: 2;
+}
+
+.nav-logo-container {
+  padding-left: 20px;
+  align-items: center;
+  display: flex;
+  padding-right: 10px;
+}
+
+.nav-logo {
+  height: 40px;
+  width: 40px;
+}
+
+.nav-button-div {
+  margin-left: auto;
+  margin-right: 30px;
+}
+
+.nav-button {
+  background-color: #0000b1;
+  border: 0;
+  height: 32px;
+  padding-left: 10px;
+  padding-right: 10px;
+  color: #fff;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+}

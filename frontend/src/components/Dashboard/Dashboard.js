@@ -16,29 +16,17 @@ function Dashboard() {
   useEffect(() => {
     (async () => {
       await axios
-      .get(`${env.apiUrl}/courses/${user.id}`)
+        .get(`${env.apiUrl}/courses/${user.id}`)
         .then((response) => {
           setError(false);
           setDashboardData(response.data);
         })
         .catch((error) => {
           setError(true);
-          // setErrorMsg(error);
+          setErrorMsg(error);
         });
     })();
   }, []);
-
-  async function logout(e) {
-    e.preventDefault();
-
-    await auth.signout(() => {
-      navigate('/logout');
-    });
-  }
-
-  const enrollOnClick = () => {
-    navigate('/courses/enroll');
-  };
 
   const renderCourse = (course, index) => {
     const gradientClass = 'course-grade-lg' + (index % 10);
@@ -61,10 +49,8 @@ function Dashboard() {
       <div className="dashboard-subHeader">
         <h1>Dashboard</h1>
       </div>
-      <button onClick={enrollOnClick}>Enroll in a course</button>
       <div className="grid-container">{gridCourses}</div>
       {error ? <div>{errorMsg}</div> : null}
-      <button onClick={async (e) => await logout(e)}>Logout</button>
     </div>
   );
 }
