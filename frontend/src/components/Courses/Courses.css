@@ -1,0 +1,31 @@
+.button {
+  width: 30%;
+  height: 50px;
+  margin: auto;
+  border-radius: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.button-text {
+  color: black;
+  font-size: 20px;
+}
+
+.courses-heading {
+  font-size: 30px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  height: 100px;
+}
+
+.courses-container1 {
+  background-color: var(--brand);
+  background-image: url('../../assets/Login/login-background.svg');
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  min-height: 100vh;
+  display: grid;
+}

@@ -53,7 +53,7 @@ router.post('/:id', auth, async (req, res) => {
   const userIdStr = userId.toString();
   const user = await userData.getUser(userIdStr);
 
-  if (user.role !== 'teacher') {
+  if (user.role.toLowerCase() !== 'teacher') {
     res.sendStatus(403);
     return;
   }
@@ -78,7 +78,7 @@ router.patch('/:id', auth, async (req, res) => {
   const userIdStr = userId.toString();
   const user = await userData.getUser(userIdStr);
 
-  if (user.role !== 'teacher') {
+  if (user.role.toLowerCase() !== 'teacher') {
     res.sendStatus(403);
     return;
   }
@@ -103,7 +103,7 @@ router.delete('/:id', auth, async (req, res) => {
   const userIdStr = userId.toString();
   const user = await userData.getUser(userIdStr);
 
-  if (user.role !== 'teacher') {
+  if (user.role.toLowerCase() !== 'teacher') {
     res.sendStatus(403);
     return;
   }
@@ -191,7 +191,7 @@ router.patch('/grades/:assignmentId', auth, async (req, res) => {
     }
 
     const user = await userData.getUser(teacherId);
-    if (user.role !== 'teacher') {
+    if (user.role.toLowerCase() !== 'teacher') {
       return res.status(403).json({ error: 'Only teachers can modify grade' });
     }
 

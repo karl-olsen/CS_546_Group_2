@@ -57,8 +57,9 @@ router.get('/:id', auth, async (req, res) => {
   }
 });
 
-//Route to create new course when given a Course Name and array of Teacher IDs
+//Route to create new course when given a Course Name and a Teacher ID
 router.post('/', auth, async (req, res) => {
+
   const { userId, courseName } = req.body;
 
   let role = await getRole(userId);
@@ -66,7 +67,11 @@ router.post('/', auth, async (req, res) => {
   try {
     if (role.toLowerCase() !== 'teacher') throw 'Course creation can ONLY be called by users with Teacher role!';
 
-    await courseData.createCourse(courseName, [userId]);
+    //create new course with the userId being the first teacher in the course. Also store the new course's ID as a string
+    let newCourseId = (await courseData.createCourse(courseName, userId)).toString();
+
+    //add new course to the teacher's Classes array
+    await userData.addCourseToTeacher(newCourseId, userId);
 
     const newCourse = {
       added: true,
@@ -91,7 +96,7 @@ router.patch('/', auth, async (req, res) => {
     if (role.toLowerCase() !== 'teacher') throw 'Teachers can ONLY be added to courses if they have the teacher role!';
 
     let courseName = await courseData.addTeacher(courseId, userId);
-    let teacherName = await userData.addCourse(courseId, userId);
+    let teacherName = await userData.addCourseToTeacher(courseId, userId);
 
     res.status(200).json({ added: true });
   } catch (e) {

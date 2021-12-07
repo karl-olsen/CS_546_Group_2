@@ -4,6 +4,7 @@ import Create from './components/Courses/Create';
 import Assignments from './components/Courses/Assignments';
 import CreateAssignment from './components/Courses/CreateAssignment';
 import Dashboard from './components/Dashboard/Dashboard';
+import Courses from './components/Courses/Courses';
 import { Routes, Route, Outlet } from 'react-router-dom';
 import exportedObj from './providers/AuthProvider';
 import axios from 'axios';
@@ -12,6 +13,7 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.min.css';
 import Logout from './components/Logout/Logout';
 import Signup from './components/Signup/Signup';
+import Enroll from './components/Courses/Enroll';
 
 axios.interceptors.request.use(
   (config) => {
@@ -38,9 +40,9 @@ function App() {
         <Route
           path="/signup"
           element={
-            <exportedObj.RequiteUnAuth>
+            <exportedObj.RequireUnAuth>
               <Signup />
-            </exportedObj.RequiteUnAuth>
+            </exportedObj.RequireUnAuth>
           }
         />
 
@@ -72,6 +74,14 @@ function App() {
             }
           />
           <Route
+            path="/courses/:id"
+            element={
+              <exportedObj.RequireAuth>
+                <Courses />
+              </exportedObj.RequireAuth>
+            }
+          />
+          <Route
             path="/courses/:id/assignments"
             element={
               <exportedObj.RequireAuth>
@@ -84,6 +94,14 @@ function App() {
             element={
               <exportedObj.RequireAuth>
                 <CreateAssignment />
+              </exportedObj.RequireAuth>
+            }
+          />
+          <Route
+            path="/courses/enroll"
+            element={
+              <exportedObj.RequireAuth>
+                <Enroll />
               </exportedObj.RequireAuth>
             }
           />
