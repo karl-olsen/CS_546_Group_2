@@ -35,14 +35,14 @@ function CreateAssignment() {
           })
           .then((response) => {
             setIsSuccessful(true);
-            notifySuccess('Successfully enrolled in the course!');
+            notifySuccess('Assignment created successfully!');
           })
           .catch((error) => {
             console.log("ERROR: " + error);
             console.log("ERROR.RESPONSE: " + error.response);
             console.log("ERROR.RESPONSE.DATA: " + error.response.data);
             console.log("Stringify: " + JSON.stringify(error.response.data));
-            notifyError(error.response.data || 'Unable to enroll in the course. Try again!');
+            notifyError(error.response.data || 'Unable to create the assignment. Try again!');
           });
     }
 
