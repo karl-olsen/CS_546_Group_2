@@ -11,18 +11,19 @@ function Dashboard() {
   let [dashboardData, setDashboardData] = useState([]);
   let [error, setError] = useState(false);
   let [errorMsg, setErrorMsg] = useState('');
+  const user = JSON.parse(localStorage.user);
 
   useEffect(() => {
     (async () => {
       await axios
-        .get(`${env.apiUrl}/courses/${auth.user.id}`)
+      .get(`${env.apiUrl}/courses/${user.id}`)
         .then((response) => {
           setError(false);
           setDashboardData(response.data);
         })
         .catch((error) => {
           setError(true);
-          setErrorMsg(error);
+          // setErrorMsg(error);
         });
     })();
   }, []);

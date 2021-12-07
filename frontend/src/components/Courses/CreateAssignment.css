@@ -72,21 +72,7 @@
     filter: brightness(80%);
   }
   
-  .btn-alt {
-    background-color: transparent;
-    border: 0;
-    border-bottom: 1px solid transparent;
-    color: #fff;
-    font-weight: 600;
-    font-size: 1rem;
-    cursor: pointer;
-  }
-  
-  .btn-alt:hover {
-    border-bottom: 1px solid var(--brand-alt);
-  }
-  
-  .courses-input {
+  .assignment-info-input {
     background-color: transparent;
     color: var(--brand-alt);
     border: 1px solid var(--brand-alt);
@@ -98,7 +84,7 @@
     font-family: inherit;
   }
   
-  .courses-input::placeholder {
+  .assignment-info-input::placeholder {
     color: var(--brand-alt);
     font-size: 1rem;
     font-weight: 400;
@@ -138,11 +124,5 @@
     color: var(--brand-alt);
     margin: 0;
     text-align: center;
-  }
-  
-  .courses-options-container {
-    padding: 1em 0;
-    display: flex;
-    justify-content: center;
   }
   
