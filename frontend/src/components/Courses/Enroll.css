@@ -5,6 +5,7 @@
   padding-left: 30px;
   padding-right: 30px;
   box-sizing: border-box;
+  margin-top: 50px;
 }
 
 .enroll-course-container {
@@ -17,6 +18,10 @@
   margin-bottom: 25px;
   background: #f2f7ff;
   justify-content: space-between;
+}
+
+ul.course-list-view {
+  padding-left: 0;
 }
 
 .course-list-view {
@@ -48,4 +53,14 @@ button.enroll-button:hover {
 
 .enroll-course-name {
   padding-left: 40px;
+}
+
+.enroll-subHeader {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  border-bottom: 1px solid #c7cdd1;
+  background: rgba(255, 255, 255, 0.95);
+  box-sizing: border-box;
+  height: 4.5rem;
 }
