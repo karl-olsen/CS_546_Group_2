@@ -50,7 +50,9 @@ function Enroll() {
 
   return (
     <div className="enroll-container">
-      <h1>Enroll from below courses</h1>
+      <div className="enroll-subHeader">
+        <h1>Enroll from below courses</h1>
+      </div>
       <ul className="course-list-view">{renderCourseList}</ul>
     </div>
   );

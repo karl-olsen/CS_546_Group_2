@@ -6,6 +6,7 @@
   padding-left: 30px;
   padding-right: 30px;
   box-sizing: border-box;
+  margin-top: 50px;
 }
 
 .grid-container {
@@ -29,6 +30,7 @@
 .course-element-container {
   display: flex;
   flex-direction: column;
+  cursor: pointer;
 }
 
 .course-element {
