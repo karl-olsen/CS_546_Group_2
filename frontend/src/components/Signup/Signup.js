@@ -19,6 +19,7 @@ function Signup() {
     role: '',
   });
   const [loginData, setLoginData] = useState(placeholderFormData);
+  const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
 
@@ -27,6 +28,7 @@ function Signup() {
     e.preventDefault();
 
     // Check input fields
+    setLoading(true);
 
     if (loginData.password === loginData.confirmPassword) {
       // need to handle scenario where email already exists
@@ -47,11 +49,12 @@ function Signup() {
         e.target.reset();
         navigate('/login');
       } catch (e) {
-        notify(e.response.data.error || e.message);
+        notify(e?.response?.data?.error || e?.message);
       }
     } else {
       notify('Your passwords do not match!');
     }
+    setLoading(false);
   }
 
   const updateForm = (e) => {
@@ -110,6 +113,13 @@ function Signup() {
             <p className="login-subheader">Let's get you signed up! Please fill in some information below.</p>
           </div>
         </div>
+        {loading ? (
+          <div class="loading__container">
+            <div class="loading__wrapper">
+              <div class="loader"></div>
+            </div>
+          </div>
+        ) : null}
         <form onSubmit={async (e) => await handleSubmit(e)}>
           <div className="login-fields-container">
             <label className="visuallyhidden" htmlFor="firstName">
