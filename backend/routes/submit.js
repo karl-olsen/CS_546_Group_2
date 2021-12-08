@@ -29,7 +29,9 @@ router.post('/', auth, async (req, res) => {
     if (e.message !== 'You must upload a file') {
       try {
         reverted = await deleteFileInstanceById(req.file?.id);
-      } catch (e) {}
+      } catch (e) {
+        console.log(e);
+      }
     }
     res.status(500).json({ error: e.message, uploadReverted: reverted });
   }

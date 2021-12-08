@@ -102,6 +102,9 @@ function Courses() {
         ) : (
           <>
             <div className="courses-heading-container">
+              <h1 className="courses-header">
+                <a href={`http://localhost:3000/courses/${id}/assignments`}>View Your Assignments</a>
+              </h1>
               <h1 className="courses-header">Drop {courseName}</h1>
             </div>
             {isSuccessful && <p className="courses-subheader">Succesfully Dropped!</p>}

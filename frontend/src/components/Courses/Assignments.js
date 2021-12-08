@@ -1,8 +1,6 @@
 import axios from 'axios';
 import { useParams } from 'react-router';
 import { useLocation } from 'react-router-dom';
-import whiteboard from '../../assets/Courses/whiteboard.png';
-import userIcon from '../../assets/Login/user.svg';
 import './Assignments.css';
 import { useEffect, useState } from 'react';
 import './Create.css';
@@ -14,6 +12,8 @@ function Assignments() {
   const user = JSON.parse(localStorage.user);
   const [courseName, setCourseName] = useState('');
   const [assignments, setAssignments] = useState([]);
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [isFilePicked, setIsFilePicked] = useState(false);
   const [isError, setIsError] = useState(false);
 
   // if we want to tell user where they came from
@@ -51,7 +51,11 @@ function Assignments() {
           {assignments.map((assignment, index) => (
             <div className="courses-assignment-container" key={index}>
               <div className="assignment-type">{assignment.type}</div>
-              <div className="assignment-name">{assignment.name}</div>
+              <div className="assignment-name">
+                <a href={`http://localhost:3000/courses/${id}/assignments/${assignment._id.toString()}`}>
+                  {assignment.name}
+                </a>
+              </div>
               <div className="assignment-description">{assignment.description}</div>
             </div>
           ))}
