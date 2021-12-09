@@ -6,10 +6,10 @@ import { useState } from 'react';
 import exportedObj from '../../providers/AuthProvider';
 import './Login.css';
 import { toast } from 'react-toastify';
+import Spinner from '../Spinner/Spinner';
 
 function Login() {
   const notify = (message) => toast.error(message);
-  const statusNotify = (message) => toast.success(message);
 
   let navigate = useNavigate();
   let location = useLocation();
@@ -61,13 +61,7 @@ function Login() {
             <p className="login-subheader">Welcome, please log in.</p>
           </div>
         </div>
-        {loading ? (
-          <div class="loading__container">
-            <div class="loading__wrapper">
-              <div class="loader"></div>
-            </div>
-          </div>
-        ) : null}
+        {loading ? <Spinner /> : null}
         <form onSubmit={async (e) => await handleSubmit(e)}>
           <div className="login-fields-container">
             <label className="visuallyhidden" htmlFor="email">
