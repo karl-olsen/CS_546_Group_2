@@ -14,7 +14,7 @@ import 'react-toastify/dist/ReactToastify.min.css';
 import Logout from './components/Logout/Logout';
 import Signup from './components/Signup/Signup';
 import Enroll from './components/Courses/Enroll';
-import Forbidden from './components/Courses/Forbidden';
+import Forbidden from './components/ErrorPages/Forbidden';
 
 axios.interceptors.request.use(
   (config) => {

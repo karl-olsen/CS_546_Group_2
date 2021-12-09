@@ -23,7 +23,7 @@ function Dashboard() {
         })
         .catch((error) => {
           setError(true);
-          setErrorMsg(error);
+          // setErrorMsg(error);
         });
     })();
   }, []);
