@@ -8,6 +8,13 @@ import { useEffect, useState } from 'react';
 import env from '../../env';
 import { toast } from 'react-toastify';
 
+function validateInput(string, fieldName)  {
+  if (!string) throw new Error(fieldName + ' is undefined or null, please provide input.');
+  if (typeof string !== 'string') throw new Error(fieldName + ' must be of type string.');
+  if (string.length === 0) throw new Error(fieldName + ' must be greater than 0 in length.');
+  if (!string.trim().length) throw new Error(fieldName + ' contained only whitespace.');
+};
+
 function CreateAssignment() {
     const { id } = useParams();
     let location = useLocation();
@@ -28,22 +35,32 @@ function CreateAssignment() {
         e = e || window.event;
         e.preventDefault();
 
+       try{
+          validateInput(assignmentName, "Assignment name");
+          validateInput(assignmentType, "Assignment type");
+          validateInput(assignmentDesc, "Assignment description");
+
           await axios.post(`${env?.apiUrl}/assignments/${id}`, {
             name: assignmentName,          
             type: assignmentType,
             description: assignmentDesc
-          })
-          .then((response) => {
-            setIsSuccessful(true);
-            notifySuccess('Assignment created successfully!');
-          })
-          .catch((error) => {
-            console.log("ERROR: " + error);
-            console.log("ERROR.RESPONSE: " + error.response);
-            console.log("ERROR.RESPONSE.DATA: " + error.response.data);
-            console.log("Stringify: " + JSON.stringify(error.response.data));
-            notifyError(error.response.data || 'Unable to create the assignment. Try again!');
           });
+
+          setIsSuccessful(true);
+          notifySuccess('Assignment created successfully!');
+
+          //Using client-side validateInput made this section unnecessary. Leaving it in, commented out just in case we decide to use this method instead
+          // .then((response) => {
+          //   setIsSuccessful(true);
+          //   notifySuccess('Assignment created successfully!');
+          // })
+          // .catch((error) => {
+          //   notifyError(error.response.data || 'Unable to create the assignment. Try again!');
+          // });
+
+        } catch(e) {
+          notifyError(e.toString() || 'Unable to create the assignment. Try again!');
+        }
     }
 
 
