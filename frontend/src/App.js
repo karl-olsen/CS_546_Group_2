@@ -36,14 +36,7 @@ function App() {
       <Routes>
         <Route path="/login" element={<Login />} />
 
-        <Route
-          path="/signup"
-          element={
-            <exportedObj.RequireUnAuth>
-              <Signup />
-            </exportedObj.RequireUnAuth>
-          }
-        />
+        <Route path="/signup" element={<Signup />} />
 
         <Route path="/logout" element={<Logout />} />
 
@@ -96,7 +89,6 @@ function App() {
               </exportedObj.RequireAuth>
             }
           />
-          {/* Put the rest of your auth routes here follow the syntax */}
         </Route>
       </Routes>
     </exportedObj.AuthProvider>

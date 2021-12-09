@@ -6,6 +6,7 @@ import { useState } from 'react';
 import exportedObj from '../../providers/AuthProvider';
 import './Login.css';
 import { toast } from 'react-toastify';
+import Spinner from '../Spinner/Spinner';
 
 function Login() {
   const notify = (message) => toast.error(message);
@@ -16,6 +17,7 @@ function Login() {
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
 
   // if we want to tell user where they came from
   let from = location.state?.from?.pathname || '/';
@@ -26,6 +28,7 @@ function Login() {
 
     // Check input fields
     // display loading spinner
+    setLoading(true);
 
     await auth.signin({ email, password }, (res) => {
       // Send them back to the page they tried to visit when they were
@@ -40,8 +43,9 @@ function Login() {
       if (res === true) {
         navigate(from, { replace: true });
       } else {
-        notify(res.response.data.error || 'Failed to login');
+        notify(res?.response?.data?.error || 'Failed to login');
       }
+      setLoading(false);
     });
   }
 
@@ -57,6 +61,7 @@ function Login() {
             <p className="login-subheader">Welcome, please log in.</p>
           </div>
         </div>
+        {loading ? <Spinner /> : null}
         <form onSubmit={async (e) => await handleSubmit(e)}>
           <div className="login-fields-container">
             <label className="visuallyhidden" htmlFor="email">
@@ -102,6 +107,7 @@ function Login() {
             </button>
           </div>
         </form>
+
         <div className="login-options-container">
           <button
             className="btn-alt"
