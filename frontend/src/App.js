@@ -89,7 +89,6 @@ function App() {
               </exportedObj.RequireAuth>
             }
           />
-          {/* Put the rest of your auth routes here follow the syntax */}
         </Route>
       </Routes>
     </exportedObj.AuthProvider>

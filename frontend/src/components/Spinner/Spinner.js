@@ -2,9 +2,9 @@ import './Spinner.css';
 
 function Spinner() {
   return (
-    <div class="loading__container">
-      <div class="loading__wrapper">
-        <div class="loader"></div>
+    <div className="loading__container">
+      <div className="loading__wrapper">
+        <div className="loader"></div>
       </div>
     </div>
   );
