@@ -10,3 +10,70 @@
   height: 100px;
   background-color: #fafafa;
 }
+
+.submit-container {
+  margin: auto;
+  background-color: #fafafa;
+  padding: 15px 20px;
+  border-radius: 10px;
+}
+
+#chooseFile {
+  padding: 10px 10px;
+  border: 3px solid blue;
+  margin-bottom: 8px;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#chooseFile:hover {
+  background-color: #b2def2;
+}
+
+#chooseFile::-webkit-file-upload-button {
+  display: none;
+}
+
+#submitFile {
+  border: 3px solid blue !important;
+  background-color: #fafafa;
+  padding: 10px 10px;
+  width: 100%;
+  border: 1px solid black;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
+#submitFile:hover {
+  background-color: #b2def2;
+}
+
+.assignment-grade-name {
+  flex: 0 0 25%;
+}
+
+.assignment-grade-type {
+  flex: 0 0 25%;
+}
+
+.assignment-grade-description {
+  flex: 0 0 25%;
+}
+
+.assignment-grade-grade {
+  flex: 0 0 25%;
+}
+
+.assignment-grade-min {
+  flex: 0 0 33.3%;
+}
+
+.assignment-grade-max {
+  flex: 0 0 33.3%;
+}
+
+.assignment-grade-avg {
+  flex: 0 0 33.3%;
+}

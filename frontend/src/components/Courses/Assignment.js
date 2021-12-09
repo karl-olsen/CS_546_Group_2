@@ -18,6 +18,7 @@ function Assignments() {
   const [selectedFile, setSelectedFile] = useState();
   const [isFilePicked, setIsFilePicked] = useState(false);
   const [grade, setGrade] = useState('');
+  const [metrics, setMetrics] = useState([]);
   const [isError, setIsError] = useState(false);
 
   // if we want to tell user where they came from
@@ -56,11 +57,24 @@ function Assignments() {
       }
       const _assignment = assignments.data.find((assignment) => assignment._id.toString() === assignmentId);
       setAssignment(_assignment);
-      // const _grade = await axios.get(`${env?.apiUrl}/assignments/grades/${assignmentId}?studentId=${user.id}`);
-      // setGrade(_grade);
     })();
   }, []);
 
+  useEffect(async () => {
+    const _grade = await axios.get(`${env?.apiUrl}/assignments/grades/${assignmentId}?studentId=${user.id}`);
+    if (_grade.status === 200) {
+      setGrade(_grade.data.grade);
+    }
+  }, []);
+
+  useEffect(async () => {
+    try {
+      const _metrics = await axios.get(`${env?.apiUrl}/assignments/grades/metrics/${assignmentId}`);
+      setMetrics(_metrics.data.grades);
+    } catch (e) {
+      setMetrics(null);
+    }
+  }, []);
   return (
     <>
       <div className="courses-container">
@@ -69,24 +83,48 @@ function Assignments() {
         </div>
         <div className="assignment-container">
           <div className="courses-assignment-container">
-            <div className="assignment-type bold">Type</div>
-            <div className="assignment-name bold">Name</div>
-            <div className="assignment-description bold">Description</div>
+            <div className="assignment-grade-type bold">Type</div>
+            <div className="assignment-grade-name bold">Name</div>
+            <div className="assignment-grade-description bold">Description</div>
+            <div className="assignment-grade-description bold">Grade</div>
           </div>
           <div className="courses-assignment-container">
-            <div className="assignment-type">{assignment.type}</div>
-            <div className="assignment-name">{assignment.name}</div>
-            <div className="assignment-description">{assignment.description}</div>
+            <div className="assignment-grade-type">{assignment.type}</div>
+            <div className="assignment-grade-name">{assignment.name}</div>
+            <div className="assignment-grade-description">{assignment.description}</div>
+            <div className="assignment-grade-grade">{grade ? grade : 'n/a'}</div>
           </div>
         </div>
-
-        <form onSubmit={handleSubmit}>
-          <input type="file" name="file" onChange={(e) => setSelectedFile(e.target.files[0])} />
-          <div>
-            <button type="submit">Submit</button>
+        {metrics && (
+          <div className="assignment-container">
+            <div className="courses-assignment-container">
+              <div className="assignment-grade-min bold">Min</div>
+              <div className="assignment-grade-max bold">Max</div>
+              <div className="assignment-grade-avg bold">Avg</div>
+            </div>
+            <div className="courses-assignment-container">
+              <div className="assignment-grade-min">{metrics.min}</div>
+              <div className="assignment-grade-max">.{metrics.max}</div>
+              <div className="assignment-grade-avg">{metrics.average}</div>
+            </div>
           </div>
-        </form>
-
+        )}
+        <div className="submit-container">
+          <form onSubmit={handleSubmit}>
+            <input
+              type="file"
+              name="file"
+              id="chooseFile"
+              title="Upload File"
+              onChange={(e) => setSelectedFile(e.target.files[0])}
+            />
+            <div>
+              <button type="submit" id="submitFile">
+                Submit
+              </button>
+            </div>
+          </form>
+        </div>
         <div className="courses-options-container"></div>
       </div>
     </>

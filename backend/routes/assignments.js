@@ -127,7 +127,6 @@ router.delete('/:id', auth, async (req, res) => {
 router.get('/grades/:assignmentId', auth, async (req, res) => {
   const assignmentId = req.params.assignmentId;
   const studentId = req.query.studentId;
-  console.log(studentId);
   try {
     try {
       error.str(assignmentId);
@@ -211,6 +210,7 @@ router.patch('/grades/:assignmentId', auth, async (req, res) => {
  * Params: assignmentId
  */
 router.get('/grades/metrics/:assignmentId', auth, async (req, res) => {
+  console.log('i ran');
   const assignmentId = req.params.assignmentId;
   try {
     try {
