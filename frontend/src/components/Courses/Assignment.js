@@ -6,9 +6,11 @@ import './Assignments.css';
 import { useEffect, useState } from 'react';
 import './Create.css';
 import env from '../../env';
+import { toast } from 'react-toastify';
 
 function Assignments() {
   const { id, assignmentId } = useParams();
+  const notify = (message) => toast.error(message);
   let location = useLocation();
   const user = JSON.parse(localStorage.user);
   const [courseName, setCourseName] = useState('');
@@ -24,31 +26,40 @@ function Assignments() {
   async function handleSubmit(e) {
     e = e || window.event;
     e.preventDefault();
-    setIsFilePicked(true);
+    // setIsFilePicked(true);
+    await uploadFile();
   }
 
-  useEffect(async () => {
-    const assignments = await axios.get(`${env?.apiUrl}/assignments/${id}`);
-    if (assignments.status !== 200) {
-      setIsError(true);
+  async function uploadFile() {
+    if (!selectedFile) {
+      notify('You must upload a file');
       return;
     }
-    const _assignment = assignments.data.find((assignment) => assignment._id.toString() === assignmentId);
-    setAssignment(_assignment);
-    const _grade = await axios.get(`${env?.apiUrl}/assignments/grades/${assignmentId}?studentId=${user.id}`);
-    setGrade(_grade);
-  }, []);
-
-  useEffect(async () => {
-    if (isFilePicked) {
-      console.log(selectedFile);
-      await axios.post(`${env?.apiUrl}/submit`, {
-        file: selectedFile,
-        studentId: user.id,
-        assignmentId,
-      });
+    const data = new FormData();
+    console.log('selected ', selectedFile);
+    data.append('studentId', user.id);
+    data.append('assignmentId', assignmentId);
+    data.append('file', selectedFile);
+    try {
+      await axios.post(`${env?.apiUrl}/submit`, data);
+    } catch (e) {
+      notify(e?.response?.data?.error || 'Unable to upload file');
     }
-  }, [isFilePicked]);
+  }
+
+  useEffect(() => {
+    (async () => {
+      const assignments = await axios.get(`${env?.apiUrl}/assignments/${id}`);
+      if (assignments.status !== 200) {
+        setIsError(true);
+        return;
+      }
+      const _assignment = assignments.data.find((assignment) => assignment._id.toString() === assignmentId);
+      setAssignment(_assignment);
+      // const _grade = await axios.get(`${env?.apiUrl}/assignments/grades/${assignmentId}?studentId=${user.id}`);
+      // setGrade(_grade);
+    })();
+  }, []);
 
   return (
     <>
@@ -69,12 +80,12 @@ function Assignments() {
           </div>
         </div>
 
-        <div>
+        <form onSubmit={handleSubmit}>
           <input type="file" name="file" onChange={(e) => setSelectedFile(e.target.files[0])} />
           <div>
-            <button onClick={handleSubmit}>Submit</button>
+            <button type="submit">Submit</button>
           </div>
-        </div>
+        </form>
 
         <div className="courses-options-container"></div>
       </div>
