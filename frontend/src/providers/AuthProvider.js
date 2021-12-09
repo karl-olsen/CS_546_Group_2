@@ -68,10 +68,9 @@ function AuthProvider({ children }) {
 
   let signout = async (callback) => {
     return await unauthenticate((res) => {
-      const data = res.data;
-      if (!data) return callback(res);
       // could add error handling in case fails
       localStorage.removeItem('token');
+      localStorage.removeItem('user');
       setJwt(null);
       setUser(placeholderUser);
       callback();
