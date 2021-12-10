@@ -210,7 +210,6 @@ router.patch('/grades/:assignmentId', auth, async (req, res) => {
  * Params: assignmentId
  */
 router.get('/grades/metrics/:assignmentId', auth, async (req, res) => {
-  console.log('i ran');
   const assignmentId = req.params.assignmentId;
   try {
     try {

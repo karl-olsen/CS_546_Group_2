@@ -391,47 +391,47 @@ async function main() {
   await data.courses.addStudent(course9.toString(), student10.toString());
 
   //Add Grades to student1
-  await data.users.addGrade(student1.toString(), course1.toString(), course1Assignment1.toString(), '97');
-  await data.users.addGrade(student1.toString(), course3.toString(), course3Assignment2.toString(), '86');
-  await data.users.addGrade(student1.toString(), course3.toString(), course3Assignment1.toString(), '75');
+  // await data.users.addGrade(student1.toString(), course1.toString(), course1Assignment1.toString(), '97');
+  // await data.users.addGrade(student1.toString(), course3.toString(), course3Assignment2.toString(), '86');
+  // await data.users.addGrade(student1.toString(), course3.toString(), course3Assignment1.toString(), '75');
 
-  //Add Grades to student2
-  await data.users.addGrade(student2.toString(), course4.toString(), course4Assignment1.toString(), '100');
-  await data.users.addGrade(student2.toString(), course4.toString(), course4Assignment2.toString(), '85');
-  await data.users.addGrade(student2.toString(), course3.toString(), course3Assignment1.toString(), '97');
+  // //Add Grades to student2
+  // await data.users.addGrade(student2.toString(), course4.toString(), course4Assignment1.toString(), '100');
+  // await data.users.addGrade(student2.toString(), course4.toString(), course4Assignment2.toString(), '85');
+  // await data.users.addGrade(student2.toString(), course3.toString(), course3Assignment1.toString(), '97');
 
-  //Add Grades to student3
-  await data.users.addGrade(student3.toString(), course5.toString(), course5Assignment1.toString(), '60');
-  await data.users.addGrade(student3.toString(), course3.toString(), course3Assignment4.toString(), '40');
+  // //Add Grades to student3
+  // await data.users.addGrade(student3.toString(), course5.toString(), course5Assignment1.toString(), '60');
+  // await data.users.addGrade(student3.toString(), course3.toString(), course3Assignment4.toString(), '40');
 
-  //Add Grades to student4
-  await data.users.addGrade(student4.toString(), course4.toString(), course4Assignment1.toString(), '100');
+  // //Add Grades to student4
+  // await data.users.addGrade(student4.toString(), course4.toString(), course4Assignment1.toString(), '100');
 
-  //Add Grades to student5
-  await data.users.addGrade(student5.toString(), course6.toString(), course6Assignment1.toString(), '80');
-  await data.users.addGrade(student5.toString(), course7.toString(), course7Assignment1.toString(), '70');
-  await data.users.addGrade(student5.toString(), course7.toString(), course7Assignment2.toString(), '99');
-  await data.users.addGrade(student5.toString(), course9.toString(), course9Assignment1.toString(), '100');
+  // //Add Grades to student5
+  // await data.users.addGrade(student5.toString(), course6.toString(), course6Assignment1.toString(), '80');
+  // await data.users.addGrade(student5.toString(), course7.toString(), course7Assignment1.toString(), '70');
+  // await data.users.addGrade(student5.toString(), course7.toString(), course7Assignment2.toString(), '99');
+  // await data.users.addGrade(student5.toString(), course9.toString(), course9Assignment1.toString(), '100');
 
-  //Add Grades to student7
-  await data.users.addGrade(student7.toString(), course1.toString(), course1Assignment1.toString(), '100');
-  await data.users.addGrade(student7.toString(), course7.toString(), course7Assignment2.toString(), '100');
-  await data.users.addGrade(student7.toString(), course6.toString(), course6Assignment1.toString(), '100');
-  await data.users.addGrade(student7.toString(), course8.toString(), course8Assignment1.toString(), '100');
+  // //Add Grades to student7
+  // await data.users.addGrade(student7.toString(), course1.toString(), course1Assignment1.toString(), '100');
+  // await data.users.addGrade(student7.toString(), course7.toString(), course7Assignment2.toString(), '100');
+  // await data.users.addGrade(student7.toString(), course6.toString(), course6Assignment1.toString(), '100');
+  // await data.users.addGrade(student7.toString(), course8.toString(), course8Assignment1.toString(), '100');
 
-  //Add Grades to student8
-  await data.users.addGrade(student8.toString(), course3.toString(), course3Assignment3.toString(), '100');
-  await data.users.addGrade(student8.toString(), course4.toString(), course4Assignment2.toString(), '100');
+  // //Add Grades to student8
+  // await data.users.addGrade(student8.toString(), course3.toString(), course3Assignment3.toString(), '100');
+  // await data.users.addGrade(student8.toString(), course4.toString(), course4Assignment2.toString(), '100');
 
-  //Add Grades to student9
-  await data.users.addGrade(student9.toString(), course3.toString(), course3Assignment3.toString(), '100');
-  await data.users.addGrade(student9.toString(), course4.toString(), course4Assignment1.toString(), '100');
-  await data.users.addGrade(student9.toString(), course9.toString(), course9Assignment2.toString(), '100');
-  await data.users.addGrade(student9.toString(), course6.toString(), course6Assignment1.toString(), '100');
+  // //Add Grades to student9
+  // await data.users.addGrade(student9.toString(), course3.toString(), course3Assignment3.toString(), '100');
+  // await data.users.addGrade(student9.toString(), course4.toString(), course4Assignment1.toString(), '100');
+  // await data.users.addGrade(student9.toString(), course9.toString(), course9Assignment2.toString(), '100');
+  // await data.users.addGrade(student9.toString(), course6.toString(), course6Assignment1.toString(), '100');
 
-  //Add Grades to student9
-  await data.users.addGrade(student10.toString(), course9.toString(), course9Assignment3.toString(), '100');
-  await data.users.addGrade(student10.toString(), course9.toString(), course9Assignment4.toString(), '100');
+  // //Add Grades to student9
+  // await data.users.addGrade(student10.toString(), course9.toString(), course9Assignment3.toString(), '100');
+  // await data.users.addGrade(student10.toString(), course9.toString(), course9Assignment4.toString(), '100');
 
   console.log('Seeded');
 }

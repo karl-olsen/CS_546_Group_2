@@ -11,18 +11,14 @@ import { toast } from 'react-toastify';
 function Assignments() {
   const { id, assignmentId } = useParams();
   const notify = (message) => toast.error(message);
-  let location = useLocation();
   const user = JSON.parse(localStorage.user);
-  const [courseName, setCourseName] = useState('');
   const [assignment, setAssignment] = useState([]);
   const [selectedFile, setSelectedFile] = useState();
-  const [isFilePicked, setIsFilePicked] = useState(false);
   const [grade, setGrade] = useState('');
   const [metrics, setMetrics] = useState([]);
   const [isError, setIsError] = useState(false);
 
   // if we want to tell user where they came from
-  let from = location.state?.from?.pathname || '/';
 
   async function handleSubmit(e) {
     e = e || window.event;
@@ -37,7 +33,6 @@ function Assignments() {
       return;
     }
     const data = new FormData();
-    console.log('selected ', selectedFile);
     data.append('studentId', user.id);
     data.append('assignmentId', assignmentId);
     data.append('file', selectedFile);

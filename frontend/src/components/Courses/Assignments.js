@@ -12,8 +12,6 @@ function Assignments() {
   const user = JSON.parse(localStorage.user);
   const [courseName, setCourseName] = useState('');
   const [assignments, setAssignments] = useState([]);
-  const [selectedFile, setSelectedFile] = useState(null);
-  const [isFilePicked, setIsFilePicked] = useState(false);
   const [isError, setIsError] = useState(false);
 
   // if we want to tell user where they came from
@@ -33,7 +31,6 @@ function Assignments() {
     const course = await axios.get(`${env?.apiUrl}/courses/single/${id}`);
     setAssignments(assignments.data);
     setCourseName(course.data.name);
-    console.log(assignments);
   }, []);
 
   return (

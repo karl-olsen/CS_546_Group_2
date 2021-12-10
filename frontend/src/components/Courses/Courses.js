@@ -1,8 +1,6 @@
 import axios from 'axios';
 import { useParams } from 'react-router';
 import { useLocation } from 'react-router-dom';
-import whiteboard from '../../assets/Courses/whiteboard.png';
-import userIcon from '../../assets/Login/user.svg';
 import './Assignments.css';
 import { useEffect, useState } from 'react';
 import './Create.css';

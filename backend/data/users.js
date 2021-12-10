@@ -564,7 +564,6 @@ async function fetchAllGrades(assignmentId) {
 async function fetchGradeMetrics(assignmentId) {
   const userCollection = await users();
   const parsedAssignmentId = error.validId(assignmentId);
-  console.log(parsedAssignmentId);
 
   let grades = await userCollection
     .aggregate([
