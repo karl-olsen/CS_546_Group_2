@@ -109,9 +109,7 @@ function App() {
           <Route
             path="/403"
             element={
-              <exportedObj.RequireAuth>
-                <Forbidden />
-              </exportedObj.RequireAuth>
+              <Forbidden />
             }
           />
           {/* Put the rest of your auth routes here follow the syntax */}
