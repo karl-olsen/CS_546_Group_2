@@ -92,7 +92,7 @@ function Assignments() {
             <div className="assignment-grade-type">{assignment.type}</div>
             <div className="assignment-grade-name">{assignment.name}</div>
             <div className="assignment-grade-description">{assignment.description}</div>
-            <div className="assignment-grade-grade">{grade ? grade : 'n/a'}</div>
+            <div className="assignment-grade-grade">{grade && grade !== -1 ? grade : 'n/a'}</div>
           </div>
         </div>
         {metrics && (
