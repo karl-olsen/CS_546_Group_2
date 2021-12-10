@@ -2,6 +2,7 @@ import Login from './components/Login/Login';
 import Navbar from './components/Navbar/Navbar';
 import Create from './components/Courses/Create';
 import Assignments from './components/Courses/Assignments';
+import Assignment from './components/Courses/Assignment';
 import CreateAssignment from './components/Courses/CreateAssignment';
 import Dashboard from './components/Dashboard/Dashboard';
 import Courses from './components/Courses/Courses';
@@ -37,14 +38,7 @@ function App() {
       <Routes>
         <Route path="/login" element={<Login />} />
 
-        <Route
-          path="/signup"
-          element={
-            <exportedObj.RequireUnAuth>
-              <Signup />
-            </exportedObj.RequireUnAuth>
-          }
-        />
+        <Route path="/signup" element={<Signup />} />
 
         <Route path="/logout" element={<Logout />} />
 
@@ -102,6 +96,14 @@ function App() {
             element={
               <exportedObj.RequireAuth>
                 <Enroll />
+              </exportedObj.RequireAuth>
+            }
+          />
+          <Route
+            path="/courses/:id/assignments/:assignmentId"
+            element={
+              <exportedObj.RequireAuth>
+                <Assignment />
               </exportedObj.RequireAuth>
             }
           />

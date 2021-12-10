@@ -126,7 +126,7 @@ router.delete('/:id', auth, async (req, res) => {
  */
 router.get('/grades/:assignmentId', auth, async (req, res) => {
   const assignmentId = req.params.assignmentId;
-  const studentId = req.query.id;
+  const studentId = req.query.studentId;
   try {
     try {
       error.str(assignmentId);
@@ -138,6 +138,7 @@ router.get('/grades/:assignmentId', auth, async (req, res) => {
     res.status(200).json(response);
     return;
   } catch (e) {
+    console.log(e);
     if (e.message === 'No assignments found for the given id') {
       res.status(404).json({ error: e.message });
     } else {

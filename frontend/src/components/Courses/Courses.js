@@ -1,8 +1,6 @@
 import axios from 'axios';
 import { useParams } from 'react-router';
 import { useLocation } from 'react-router-dom';
-import whiteboard from '../../assets/Courses/whiteboard.png';
-import userIcon from '../../assets/Login/user.svg';
 import './Assignments.css';
 import { useEffect, useState } from 'react';
 import './Create.css';
@@ -102,6 +100,9 @@ function Courses() {
         ) : (
           <>
             <div className="courses-heading-container">
+              <h1 className="courses-header">
+                <a href={`http://localhost:3000/courses/${id}/assignments`}>View Your Assignments</a>
+              </h1>
               <h1 className="courses-header">Drop {courseName}</h1>
             </div>
             {isSuccessful && <p className="courses-subheader">Succesfully Dropped!</p>}

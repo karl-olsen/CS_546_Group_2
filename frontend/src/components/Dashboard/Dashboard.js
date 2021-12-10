@@ -1,13 +1,9 @@
-import exportedObj from '../../providers/AuthProvider';
-import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import env from '../../env';
 import './Dashboard.css';
 
 function Dashboard() {
-  let auth = exportedObj.useAuth();
-  let navigate = useNavigate();
   let [dashboardData, setDashboardData] = useState([]);
   let [error, setError] = useState(false);
   let [errorMsg, setErrorMsg] = useState('');
@@ -23,7 +19,7 @@ function Dashboard() {
         })
         .catch((error) => {
           setError(true);
-          setErrorMsg(error);
+          // setErrorMsg(error);
         });
     })();
   }, []);
@@ -35,7 +31,9 @@ function Dashboard() {
         <div className={`course-grade-container ${gradientClass}`}>
           <div className="course-grade-circle">{course.grade}</div>
         </div>
-        <div className="course-element">{course.name}</div>
+        <div className="course-element">
+          <a href={`http://localhost:3000/courses/${course._id.toString()}`}>{course.name}</a>
+        </div>
       </a>
     );
   };
