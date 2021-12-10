@@ -1,5 +1,3 @@
-// import { styles } from './Navbar.css';
-import { Link } from 'react-router-dom';
 import exportedObj from '../../providers/AuthProvider';
 import { useNavigate } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
@@ -11,19 +9,23 @@ function Navbar() {
   let auth = exportedObj.useAuth();
   let navigate = useNavigate();
   let location = useLocation();
-  let [isDashboard, setDashboard] = useState(true);
-  let [isEnroll, setEnroll] = useState(true);
+  let [isDashboard, setDashboard] = useState(false);
+  let [isEnroll, setEnroll] = useState(false);
+  const user = localStorage.user && JSON.parse(localStorage.user);
 
   useEffect(() => {
-    if (location.pathname === '/' || location.pathname === '/dashboard') {
-      setDashboard(false);
-    } else {
-      setDashboard(true);
-    }
-    if (location.pathname === '/courses/enroll') {
-      setEnroll(false);
-    } else {
-      setEnroll(true);
+    console.log(location.pathname);
+    if (user && user.authenticated) {
+      if (location.pathname === '/' || location.pathname === '/dashboard') {
+        setDashboard(false);
+      } else {
+        setDashboard(true);
+      }
+      if (location.pathname === '/courses/enroll') {
+        setEnroll(false);
+      } else {
+        setEnroll(true);
+      }
     }
   }, [location]);
 

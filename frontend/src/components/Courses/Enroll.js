@@ -4,18 +4,29 @@ import { toast } from 'react-toastify';
 import exportedObj from '../../providers/AuthProvider';
 import env from '../../env';
 import './Enroll.css';
+import Spinner from '../Spinner/Spinner';
 
 function Enroll() {
   let auth = exportedObj.useAuth();
   let [courseList, setCourseList] = useState([]);
+  let [loading, setLoading] = useState(true);
 
   const notifySuccess = (message) => toast.success(message);
   const notifyError = (message) => toast.error(message);
 
   useEffect(() => {
     (async () => {
-      const data = await axios.get(`${env.apiUrl}/courses/all`);
-      setCourseList(data.data);
+      await axios
+        .get(`${env.apiUrl}/courses/all`)
+        .then((response) => {
+          setCourseList(response.data);
+          setLoading(false);
+        })
+        .catch((error) => {
+          let errorMsg = typeof error === 'string' ? error : error.message ? error.message : 'Something went wrong';
+          toast.error(errorMsg);
+          setLoading(false);
+        });
     })();
   }, []);
 
@@ -54,6 +65,7 @@ function Enroll() {
         <h1>Enroll from below courses</h1>
       </div>
       <ul className="course-list-view">{renderCourseList}</ul>
+      {loading && <Spinner />}
     </div>
   );
 }
