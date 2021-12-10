@@ -63,8 +63,8 @@ router.post('/:id', auth, async (req, res) => {
     res.status(200).json(newCourse);
     return;
   } catch (e) {
-    console.log(e);
-    res.sendStatus(400);
+    console.log( e);
+    return res.status(400).json(e.toString());
   }
 });
 

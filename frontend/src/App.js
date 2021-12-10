@@ -3,6 +3,7 @@ import Navbar from './components/Navbar/Navbar';
 import Create from './components/Courses/Create';
 import Assignments from './components/Courses/Assignments';
 import Assignment from './components/Courses/Assignment';
+import CreateAssignment from './components/Courses/CreateAssignment';
 import Dashboard from './components/Dashboard/Dashboard';
 import Courses from './components/Courses/Courses';
 import { Routes, Route, Outlet } from 'react-router-dom';
@@ -79,6 +80,14 @@ function App() {
             element={
               <exportedObj.RequireAuth>
                 <Assignments />
+              </exportedObj.RequireAuth>
+            }
+          />
+          <Route
+            path="/courses/:id/assignments/create"
+            element={
+              <exportedObj.RequireAuth>
+                <CreateAssignment />
               </exportedObj.RequireAuth>
             }
           />
