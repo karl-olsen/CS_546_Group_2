@@ -38,14 +38,7 @@ function App() {
       <Routes>
         <Route path="/login" element={<Login />} />
 
-        <Route
-          path="/signup"
-          element={
-            <exportedObj.RequireUnAuth>
-              <Signup />
-            </exportedObj.RequireUnAuth>
-          }
-        />
+        <Route path="/signup" element={<Signup />} />
 
         <Route path="/logout" element={<Logout />} />
 
