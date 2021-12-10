@@ -83,48 +83,28 @@ async function main() {
   );
 
   //Add courses along with teachers
-  const course1 = await data.courses.createCourse('Web Programming', [teacher1.toString()]);
-  const course2 = await data.courses.createCourse('Data Structures', [teacher2.toString(), teacher3.toString()]);
-  const course3 = await data.courses.createCourse('Advanced Algorithms', [teacher3.toString(), teacher2.toString()]);
-  const course4 = await data.courses.createCourse('CyberSecurity', [teacher4.toString()]);
-  const course5 = await data.courses.createCourse('Distribted Systems', [teacher5.toString()]);
-  const course6 = await data.courses.createCourse('Artifical Intelligence', [
-    teacher6.toString(),
-    teacher7.toString(),
-    teacher10.toString(),
-  ]);
-  const course7 = await data.courses.createCourse('Machine Learning', [
-    teacher7.toString(),
-    teacher6.toString(),
-    teacher10.toString(),
-  ]);
-  const course8 = await data.courses.createCourse('Knowledge Discovery and Data Mining', [teacher8.toString()]);
-  const course9 = await data.courses.createCourse('DBMS I', [teacher9.toString()]);
-  const course10 = await data.courses.createCourse('Applied Modeling', [
-    teacher7.toString(),
-    teacher6.toString(),
-    teacher10.toString(),
-  ]);
+  const course1 = await data.courses.createCourse('Web Programming', teacher1.toString());
+  const course2 = await data.courses.createCourse('Data Structures', teacher2.toString());
+  const course3 = await data.courses.createCourse('Advanced Algorithms', teacher3.toString());
+  const course4 = await data.courses.createCourse('CyberSecurity', teacher4.toString());
+  const course5 = await data.courses.createCourse('Distribted Systems', teacher5.toString());
+  const course6 = await data.courses.createCourse('Artifical Intelligence', teacher6.toString());
+  const course7 = await data.courses.createCourse('Machine Learning', teacher7.toString());
+  const course8 = await data.courses.createCourse('Knowledge Discovery and Data Mining', teacher8.toString());
+  const course9 = await data.courses.createCourse('DBMS I', teacher9.toString());
+  const course10 = await data.courses.createCourse('Applied Modeling', teacher10.toString());
 
   //add course to the teacher in user collection
   await data.users.addCourseToTeacher(course1.toString(), teacher1.toString());
   await data.users.addCourseToTeacher(course2.toString(), teacher2.toString());
-  await data.users.addCourseToTeacher(course2.toString(), teacher3.toString());
-  await data.users.addCourseToTeacher(course3.toString(), teacher2.toString());
   await data.users.addCourseToTeacher(course3.toString(), teacher3.toString());
   await data.users.addCourseToTeacher(course4.toString(), teacher4.toString());
   await data.users.addCourseToTeacher(course5.toString(), teacher5.toString());
   await data.users.addCourseToTeacher(course6.toString(), teacher6.toString());
-  await data.users.addCourseToTeacher(course6.toString(), teacher7.toString());
-  await data.users.addCourseToTeacher(course6.toString(), teacher10.toString());
   await data.users.addCourseToTeacher(course7.toString(), teacher7.toString());
-  await data.users.addCourseToTeacher(course7.toString(), teacher6.toString());
-  await data.users.addCourseToTeacher(course7.toString(), teacher10.toString());
   await data.users.addCourseToTeacher(course8.toString(), teacher8.toString());
   await data.users.addCourseToTeacher(course9.toString(), teacher9.toString());
-  await data.users.addCourseToTeacher(course10.toString(), teacher6.toString());
   await data.users.addCourseToTeacher(course10.toString(), teacher10.toString());
-  await data.users.addCourseToTeacher(course10.toString(), teacher7.toString());
 
   //Assignments for course1
   const course1Assignment1 = await data.courses.createAssignment(
@@ -410,50 +390,49 @@ async function main() {
   await data.users.enroll(course9.toString(), student10.toString());
   await data.courses.addStudent(course9.toString(), student10.toString());
 
-  /* TODO:: Uncomment after completing submitAssignment method
   //Add Grades to student1
-  await data.users.addGrade(student1.toString(), course1.toString(), course1Assignment1.toString(), "97");
-  await data.users.addGrade(student1.toString(), course3.toString(), course3Assignment2.toString(), "86");
-  await data.users.addGrade(student1.toString(), course3.toString(), course3Assignment1.toString(), "75");
+  // await data.users.addGrade(student1.toString(), course1.toString(), course1Assignment1.toString(), '97');
+  // await data.users.addGrade(student1.toString(), course3.toString(), course3Assignment2.toString(), '86');
+  // await data.users.addGrade(student1.toString(), course3.toString(), course3Assignment1.toString(), '75');
 
-  //Add Grades to student2
-  await data.users.addGrade(student2.toString(), course4.toString(), course4Assignment1.toString(), "100");
-  await data.users.addGrade(student2.toString(), course4.toString(), course4Assignment2.toString(), "85");
-  await data.users.addGrade(student2.toString(), course3.toString(), course3Assignment1.toString(), "97");
+  // //Add Grades to student2
+  // await data.users.addGrade(student2.toString(), course4.toString(), course4Assignment1.toString(), '100');
+  // await data.users.addGrade(student2.toString(), course4.toString(), course4Assignment2.toString(), '85');
+  // await data.users.addGrade(student2.toString(), course3.toString(), course3Assignment1.toString(), '97');
 
-  //Add Grades to student3
-  await data.users.addGrade(student3.toString(), course5.toString(), course5Assignment1.toString(), "60");
-  await data.users.addGrade(student3.toString(), course3.toString(), course3Assignment4.toString(), "40");
+  // //Add Grades to student3
+  // await data.users.addGrade(student3.toString(), course5.toString(), course5Assignment1.toString(), '60');
+  // await data.users.addGrade(student3.toString(), course3.toString(), course3Assignment4.toString(), '40');
 
-  //Add Grades to student4
-  await data.users.addGrade(student4.toString(), course4.toString(), course4Assignment1.toString(), "100");
+  // //Add Grades to student4
+  // await data.users.addGrade(student4.toString(), course4.toString(), course4Assignment1.toString(), '100');
 
-  //Add Grades to student5
-  await data.users.addGrade(student5.toString(), course6.toString(), course6Assignment1.toString(), "80");
-  await data.users.addGrade(student5.toString(), course7.toString(), course7Assignment1.toString(), "70");
-  await data.users.addGrade(student5.toString(), course7.toString(), course7Assignment2.toString(), "99");
-  await data.users.addGrade(student5.toString(), course9.toString(), course9Assignment1.toString(), "100");
+  // //Add Grades to student5
+  // await data.users.addGrade(student5.toString(), course6.toString(), course6Assignment1.toString(), '80');
+  // await data.users.addGrade(student5.toString(), course7.toString(), course7Assignment1.toString(), '70');
+  // await data.users.addGrade(student5.toString(), course7.toString(), course7Assignment2.toString(), '99');
+  // await data.users.addGrade(student5.toString(), course9.toString(), course9Assignment1.toString(), '100');
 
-  //Add Grades to student7
-  await data.users.addGrade(student7.toString(), course1.toString(), course1Assignment1.toString(), "100");
-  await data.users.addGrade(student7.toString(), course7.toString(), course7Assignment2.toString(), "100");
-  await data.users.addGrade(student7.toString(), course6.toString(), course6Assignment1.toString(), "100");
-  await data.users.addGrade(student7.toString(), course8.toString(), course8Assignment1.toString(), "100");
+  // //Add Grades to student7
+  // await data.users.addGrade(student7.toString(), course1.toString(), course1Assignment1.toString(), '100');
+  // await data.users.addGrade(student7.toString(), course7.toString(), course7Assignment2.toString(), '100');
+  // await data.users.addGrade(student7.toString(), course6.toString(), course6Assignment1.toString(), '100');
+  // await data.users.addGrade(student7.toString(), course8.toString(), course8Assignment1.toString(), '100');
 
-  //Add Grades to student8
-  await data.users.addGrade(student8.toString(), course3.toString(), course3Assignment3.toString(), "100");
-  await data.users.addGrade(student8.toString(), course4.toString(), course4Assignment2.toString(), "100");
+  // //Add Grades to student8
+  // await data.users.addGrade(student8.toString(), course3.toString(), course3Assignment3.toString(), '100');
+  // await data.users.addGrade(student8.toString(), course4.toString(), course4Assignment2.toString(), '100');
 
-  //Add Grades to student9
-  await data.users.addGrade(student9.toString(), course3.toString(), course3Assignment3.toString(), "100");
-  await data.users.addGrade(student9.toString(), course4.toString(), course4Assignment1.toString(), "100");
-  await data.users.addGrade(student9.toString(), course9.toString(), course9Assignment2.toString(), "100");
-  await data.users.addGrade(student9.toString(), course6.toString(), course6Assignment1.toString(), "100");
+  // //Add Grades to student9
+  // await data.users.addGrade(student9.toString(), course3.toString(), course3Assignment3.toString(), '100');
+  // await data.users.addGrade(student9.toString(), course4.toString(), course4Assignment1.toString(), '100');
+  // await data.users.addGrade(student9.toString(), course9.toString(), course9Assignment2.toString(), '100');
+  // await data.users.addGrade(student9.toString(), course6.toString(), course6Assignment1.toString(), '100');
 
-  //Add Grades to student9
-  await data.users.addGrade(student10.toString(), course9.toString(), course9Assignment3.toString(), "100");
-  await data.users.addGrade(student10.toString(), course9.toString(), course9Assignment4.toString(), "100");
-  */
+  // //Add Grades to student9
+  // await data.users.addGrade(student10.toString(), course9.toString(), course9Assignment3.toString(), '100');
+  // await data.users.addGrade(student10.toString(), course9.toString(), course9Assignment4.toString(), '100');
+
   console.log('Seeded');
 }
 
