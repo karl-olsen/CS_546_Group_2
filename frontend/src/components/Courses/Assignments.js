@@ -1,8 +1,6 @@
 import axios from 'axios';
 import { useParams } from 'react-router';
 import { useLocation } from 'react-router-dom';
-import whiteboard from '../../assets/Courses/whiteboard.png';
-import userIcon from '../../assets/Login/user.svg';
 import './Assignments.css';
 import { useEffect, useState } from 'react';
 import './Create.css';
@@ -33,7 +31,6 @@ function Assignments() {
     const course = await axios.get(`${env?.apiUrl}/courses/single/${id}`);
     setAssignments(assignments.data);
     setCourseName(course.data.name);
-    console.log(assignments);
   }, []);
 
   return (
@@ -51,7 +48,11 @@ function Assignments() {
           {assignments.map((assignment, index) => (
             <div className="courses-assignment-container" key={index}>
               <div className="assignment-type">{assignment.type}</div>
-              <div className="assignment-name">{assignment.name}</div>
+              <div className="assignment-name">
+                <a href={`http://localhost:3000/courses/${id}/assignments/${assignment._id.toString()}`}>
+                  {assignment.name}
+                </a>
+              </div>
               <div className="assignment-description">{assignment.description}</div>
             </div>
           ))}

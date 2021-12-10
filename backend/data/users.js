@@ -127,7 +127,8 @@ async function addCourseToTeacher(courseId, teacherId) {
   if (tempTeacher === null) throw 'User with that ID is not in database!';
 
   //if the teacher is already teaching the respective course, throw an error
-  if (tempTeacher.classes.some((e) => e._id.toString() === courseId)) throw new Error('Teacher is already teaching this course!');
+  if (tempTeacher.classes.some((e) => e._id.toString() === courseId))
+    throw new Error('Teacher is already teaching this course!');
 
   //create new class Object to be added to the teacher's "classes" array
   const classInfo = {
@@ -163,16 +164,17 @@ async function drop(courseId, userId) {
   let tempUser = await userCollection.findOne({ _id: parsedUserId });
 
   //the above call will result in null if the given ID doesn't exist in the database
-  if(!tempUser) throw 'User with that ID is not in database!';
+  if (!tempUser) throw 'User with that ID is not in database!';
 
   //if the student isn't enrolled in the course they're dropping, throw an error
-  if (!tempUser.classes.some((e) => e._id.toString() === courseId)) throw new Error('User cannot drop a course they are not enrolled in or teaching!');
+  if (!tempUser.classes.some((e) => e._id.toString() === courseId))
+    throw new Error('User cannot drop a course they are not enrolled in or teaching!');
 
   //find the course in the user's "classes" array
   for (let course of tempUser.classes) {
     //once the course has been found
     //NOTE: checking both string and ObjectId form due to discrepancies in format from seed versions
-    if (course._id == courseId || course._id  == parsedCourseId) {
+    if (course._id == courseId || course._id == parsedCourseId) {
       //edge case: user is dropping the only class they're enrolled in
       if (tempUser.classes.length == 1) tempUser.classes.pop();
       //otherwise, remove the course from the array
@@ -506,15 +508,25 @@ async function fetchGrade(assignmentId, studentId) {
   const errorMSg = 'No assignments found for the given assignment id';
 
   if (user && !user.classes) throw new Error(errorMSg);
+
+  let grade = null;
   for (const classObj of user.classes) {
-    const assignment = classObj.grades.find((e) => e._id.toString() === assignmentId);
-    if (!assignment) throw new Error(errorMSg);
-    const response = {
-      status: 'success',
-      grade: assignment.grade,
-    };
-    return response;
+    classObj.grades.forEach((e) => {
+      const idStr = e._id.toString();
+      if (idStr === parsedAssignmentId.toString()) {
+        grade = e.grade;
+      }
+    });
   }
+
+  if (!grade || grade === []) throw new Error(errorMSg);
+
+  const response = {
+    status: 'success',
+    grade,
+  };
+
+  return response;
 }
 
 /**
@@ -603,5 +615,5 @@ module.exports = {
   fetchGrade,
   fetchAllGrades,
   fetchGradeMetrics,
-  setOverallGrade
+  setOverallGrade,
 };
