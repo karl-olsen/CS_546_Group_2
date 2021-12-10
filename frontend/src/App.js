@@ -87,7 +87,9 @@ function App() {
             path="/courses/:id/assignments/create"
             element={
               <exportedObj.RequireAuth>
-                <CreateAssignment />
+                <exportedObj.RequireTeacher>
+                  <CreateAssignment />
+                </exportedObj.RequireTeacher>
               </exportedObj.RequireAuth>
             }
           />
