@@ -64,7 +64,7 @@ function Navbar() {
             Dashboard
           </button>
         )}
-        {isEnroll && (
+        {user && user.role != 'teacher' && isEnroll && (
           <button
             className="nav-button"
             onClick={(e) => {
