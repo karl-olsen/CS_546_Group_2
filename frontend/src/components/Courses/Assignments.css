@@ -38,3 +38,8 @@
 .assignment-description {
   flex: 0 0 45%;
 }
+
+.assignments-align-centre {
+  display: flex;
+  justify-content: center;
+}
