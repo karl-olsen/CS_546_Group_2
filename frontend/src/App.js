@@ -15,6 +15,7 @@ import 'react-toastify/dist/ReactToastify.min.css';
 import Logout from './components/Logout/Logout';
 import Signup from './components/Signup/Signup';
 import Enroll from './components/Courses/Enroll';
+import Forbidden from './components/ErrorPages/Forbidden';
 
 axios.interceptors.request.use(
   (config) => {
@@ -105,6 +106,12 @@ function App() {
               <exportedObj.RequireAuth>
                 <Assignment />
               </exportedObj.RequireAuth>
+            }
+          />
+          <Route
+            path="/403"
+            element={
+              <Forbidden />
             }
           />
           {/* Put the rest of your auth routes here follow the syntax */}
