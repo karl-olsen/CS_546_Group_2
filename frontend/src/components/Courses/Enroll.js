@@ -1,15 +1,14 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
-import exportedObj from '../../providers/AuthProvider';
 import env from '../../env';
 import './Enroll.css';
 import Spinner from '../Spinner/Spinner';
 
 function Enroll() {
-  let auth = exportedObj.useAuth();
   let [courseList, setCourseList] = useState([]);
   let [loading, setLoading] = useState(true);
+  const user = localStorage.user && JSON.parse(localStorage.user);
 
   const notifySuccess = (message) => toast.success(message);
   const notifyError = (message) => toast.error(message);
@@ -33,7 +32,7 @@ function Enroll() {
   const enroll = async (courseId) => {
     await axios
       .post(`${env.apiUrl}/enroll/`, {
-        userId: auth.user.id,
+        userId: user.id,
         courseId: courseId,
       })
       .then((response) => {
