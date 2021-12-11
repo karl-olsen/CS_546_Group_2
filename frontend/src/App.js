@@ -65,7 +65,9 @@ function App() {
             path="/courses/create"
             element={
               <exportedObj.RequireAuth>
-                <Create />
+                <exportedObj.RequireTeacher>
+                  <Create />
+                </exportedObj.RequireTeacher>
               </exportedObj.RequireAuth>
             }
           />
@@ -89,7 +91,9 @@ function App() {
             path="/courses/:id/assignments/create"
             element={
               <exportedObj.RequireAuth>
-                <CreateAssignment />
+                <exportedObj.RequireTeacher>
+                  <CreateAssignment />
+                </exportedObj.RequireTeacher>
               </exportedObj.RequireAuth>
             }
           />
@@ -97,7 +101,9 @@ function App() {
             path="/courses/enroll"
             element={
               <exportedObj.RequireAuth>
-                <Enroll />
+                <exportedObj.RequireStudent>
+                  <Enroll />
+                </exportedObj.RequireStudent>
               </exportedObj.RequireAuth>
             }
           />

@@ -113,11 +113,33 @@ function RequireUnAuth({ children }) {
   return children;
 }
 
+function RequireTeacher({ children }) {
+  const localUser = JSON.parse(localStorage.user);
+
+  if (localUser.role.toLowerCase() !== 'teacher') {
+    return <Navigate to="/403" />;
+  }
+
+  return children;
+}
+
+function RequireStudent({ children }) {
+  const localUser = JSON.parse(localStorage.user);
+
+  if (localUser.role.toLowerCase() !== 'student') {
+    return <Navigate to="/403" />;
+  }
+
+  return children;
+}
+
 const auth = {
   useAuth,
   AuthProvider,
   RequireAuth,
   RequireUnAuth,
+  RequireTeacher,
+  RequireStudent
 };
 
 export default auth;
