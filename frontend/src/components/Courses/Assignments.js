@@ -39,24 +39,30 @@ function Assignments() {
         <div className="courses-heading-container">
           <h1 className="courses-header">Assignments for {courseName}</h1>
         </div>
-        <div className="assignments-container">
-          <div className="courses-assignment-container">
-            <div className="assignment-type bold">Type</div>
-            <div className="assignment-name bold">Name</div>
-            <div className="assignment-description bold">Description</div>
-          </div>
-          {assignments.map((assignment, index) => (
-            <div className="courses-assignment-container" key={index}>
-              <div className="assignment-type">{assignment.type}</div>
-              <div className="assignment-name">
-                <a href={`http://localhost:3000/courses/${id}/assignments/${assignment._id.toString()}`}>
-                  {assignment.name}
-                </a>
-              </div>
-              <div className="assignment-description">{assignment.description}</div>
+        {assignments.length > 0 ? (
+          <div className="assignments-container">
+            <div className="courses-assignment-container">
+              <div className="assignment-type bold">Type</div>
+              <div className="assignment-name bold">Name</div>
+              <div className="assignment-description bold">Description</div>
             </div>
-          ))}
-        </div>
+            {assignments.map((assignment, index) => (
+              <div className="courses-assignment-container" key={index}>
+                <div className="assignment-type">{assignment.type}</div>
+                <div className="assignment-name">
+                  <a href={`http://localhost:3000/courses/${id}/assignments/${assignment._id.toString()}`}>
+                    {assignment.name}
+                  </a>
+                </div>
+                <div className="assignment-description">{assignment.description}</div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="assignment-description bold assignments-align-centre">
+            Currently there are no assignments, relax!
+          </div>
+        )}
 
         <div className="courses-options-container"></div>
       </div>

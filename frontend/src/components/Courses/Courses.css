@@ -28,4 +28,5 @@
   background-size: cover;
   min-height: 100vh;
   display: grid;
+  margin-top: 50px;
 }

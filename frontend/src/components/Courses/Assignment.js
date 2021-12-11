@@ -11,6 +11,7 @@ import { toast } from 'react-toastify';
 function Assignments() {
   const { id, assignmentId } = useParams();
   const notify = (message) => toast.error(message);
+  const notifySuccess = (message) => toast.success(message);
   const user = JSON.parse(localStorage.user);
   const [assignment, setAssignment] = useState([]);
   const [selectedFile, setSelectedFile] = useState();
@@ -37,7 +38,9 @@ function Assignments() {
     data.append('assignmentId', assignmentId);
     data.append('file', selectedFile);
     try {
-      await axios.post(`${env?.apiUrl}/submit`, data);
+      await axios.post(`${env?.apiUrl}/submit`, data).then((response) => {
+        notifySuccess('Assignment submitted');
+      });
     } catch (e) {
       notify(e?.response?.data?.error || 'Unable to upload file');
     }
@@ -87,7 +90,7 @@ function Assignments() {
             <div className="assignment-grade-type">{assignment.type}</div>
             <div className="assignment-grade-name">{assignment.name}</div>
             <div className="assignment-grade-description">{assignment.description}</div>
-            <div className="assignment-grade-grade">{grade && grade !== -1 ? grade : 'n/a'}</div>
+            <div className="assignment-grade-grade">{grade && grade !== -1 ? grade : 'N/A'}</div>
           </div>
         </div>
         {metrics && (
@@ -98,9 +101,9 @@ function Assignments() {
               <div className="assignment-grade-avg bold">Avg</div>
             </div>
             <div className="courses-assignment-container">
-              <div className="assignment-grade-min">{metrics.min}</div>
-              <div className="assignment-grade-max">.{metrics.max}</div>
-              <div className="assignment-grade-avg">{metrics.average}</div>
+              <div className="assignment-grade-min">{metrics.min !== -1 ? metrics.min : 'N/A'}</div>
+              <div className="assignment-grade-max">{metrics.max !== -1 ? metrics.max : 'N/A'}</div>
+              <div className="assignment-grade-avg">{metrics.average !== -1 ? metrics.average : 'N/A'}</div>
             </div>
           </div>
         )}

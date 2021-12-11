@@ -1,6 +1,7 @@
 import exportedObj from '../../providers/AuthProvider';
 import { useNavigate } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
+import { useParams } from 'react-router';
 import logo from '../../assets/Login/logo.png';
 import './Navbar.css';
 import { useEffect, useState } from 'react';
@@ -11,20 +12,37 @@ function Navbar() {
   let location = useLocation();
   let [isDashboard, setDashboard] = useState(false);
   let [isEnroll, setEnroll] = useState(false);
+  let [isCreateCourse, setCreateCourse] = useState(false);
+  let [isCreateAssignment, setCreateAssignment] = useState(false);
+  const { id } = useParams();
   const user = localStorage.user && JSON.parse(localStorage.user);
 
   useEffect(() => {
     console.log(location.pathname);
     if (user && user.authenticated) {
+      //dashboard
       if (location.pathname === '/' || location.pathname === '/dashboard') {
         setDashboard(false);
       } else {
         setDashboard(true);
       }
+      //enroll
       if (location.pathname === '/courses/enroll') {
         setEnroll(false);
       } else {
         setEnroll(true);
+      }
+      //create course
+      if (location.pathname === '/dashboard') {
+        setCreateCourse(true);
+      } else {
+        setCreateCourse(false);
+      }
+      //create assignment
+      if (/^(\/courses\/[a-zA-Z0-9]{24})$/.test(location.pathname)) {
+        setCreateAssignment(true);
+      } else {
+        setCreateAssignment(false);
       }
     }
   }, [location]);
@@ -47,6 +65,16 @@ function Navbar() {
     navigate('/courses/enroll');
   };
 
+  const navCreateCourse = (e) => {
+    e.preventDefault();
+    navigate('/courses/create');
+  };
+
+  const navCreateAssignment = (e) => {
+    e.preventDefault();
+    navigate(`/courses/${id}/assignments/create`);
+  };
+
   return (
     <nav className="nav-container">
       <div className="nav-logo-container">
@@ -64,7 +92,7 @@ function Navbar() {
             Dashboard
           </button>
         )}
-        {user && user.role != 'teacher' && isEnroll && (
+        {user && user.role !== 'teacher' && isEnroll && (
           <button
             className="nav-button"
             onClick={(e) => {
@@ -72,6 +100,26 @@ function Navbar() {
             }}
           >
             Enroll
+          </button>
+        )}
+        {user && user.role === 'teacher' && isCreateCourse && (
+          <button
+            className="nav-button"
+            onClick={(e) => {
+              navCreateCourse(e);
+            }}
+          >
+            Create Course
+          </button>
+        )}
+        {user && user.role === 'teacher' && isCreateAssignment && (
+          <button
+            className="nav-button"
+            onClick={(e) => {
+              navCreateAssignment(e);
+            }}
+          >
+            Create Assignment
           </button>
         )}
         <button className="nav-button nav-logout" onClick={async (e) => await logout(e)}>
