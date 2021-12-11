@@ -23,20 +23,16 @@ function Navbar() {
       //dashboard
       if (location.pathname === '/' || location.pathname === '/dashboard') {
         setDashboard(false);
+        setCreateCourse(true);
       } else {
         setDashboard(true);
+        setCreateCourse(false);
       }
       //enroll
       if (location.pathname === '/courses/enroll') {
         setEnroll(false);
       } else {
         setEnroll(true);
-      }
-      //create course
-      if (location.pathname === '/dashboard') {
-        setCreateCourse(true);
-      } else {
-        setCreateCourse(false);
       }
       //create assignment
       if (/^(\/courses\/[a-zA-Z0-9]{24})$/.test(location.pathname)) {
