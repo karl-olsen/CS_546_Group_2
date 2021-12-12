@@ -6,6 +6,13 @@ import './Create.css';
 import env from '../../env';
 import { toast } from 'react-toastify';
 
+function validateInput(string, fieldName)  {
+  if (!string) throw new Error(fieldName + ' is undefined or null, please provide input.');
+  if (typeof string !== 'string') throw new Error(fieldName + ' must be of type string.');
+  if (string.length === 0) throw new Error(fieldName + ' must be greater than 0 in length.');
+  if (!string.trim().length) throw new Error(fieldName + ' contained only whitespace.');
+};
+
 function Create() {
   const user = JSON.parse(localStorage.user);
   const notify = (message) => toast.error(message);
@@ -18,6 +25,8 @@ function Create() {
     e.preventDefault();
 
     try {
+      validateInput(courseName, "Course name");
+
       await axios.post(`${env?.apiUrl}/courses`, {
         courseName: courseName,
         userId: user.id,

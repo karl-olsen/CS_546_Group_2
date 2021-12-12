@@ -2,12 +2,16 @@ import axios from 'axios';
 import { useEffect, useState } from 'react';
 import Spinner from '../Spinner/Spinner';
 import './Enroll.css';
+import { toast } from 'react-toastify';
+import env from '../../env';
 
 function GradeAssignment(props) {
   const [grades, setGrades] = useState([]);
   const [grade, updateGradeState] = useState({});
   const [editGrade, setEditGrade] = useState({});
   const [loading, setLoading] = useState(true);
+  const [submissions, setSubmissions] = useState();
+  const notify = (message) => toast.error(message);
 
   const fetchAllGrades = async () => {
     await axios
@@ -15,7 +19,6 @@ function GradeAssignment(props) {
       .then((response) => {
         setLoading(false);
         setGrades(response.data.grades);
-        console.log(response);
       })
       .catch((error) => {
         setLoading(false);
@@ -28,8 +31,19 @@ function GradeAssignment(props) {
       });
   };
 
+  const fetchSubmissions = async () => {
+    try {
+      const submissions = await axios.get(`${env?.apiUrl}/assignments/submissions/${props.assignmentId}`);
+      console.log(submissions);
+      setSubmissions(submissions.data);
+    } catch (e) {
+      notify(e?.response?.data?.error || 'No submissions found / Unable to get submissions');
+    }
+  };
+
   useEffect(() => {
     (async () => {
+      await fetchSubmissions();
       await fetchAllGrades();
     })();
   }, []);
@@ -75,12 +89,19 @@ function GradeAssignment(props) {
     updateGradeState(values);
   };
 
+  const renderSubmission = (user) => {
+    const result = submissions.find((submission) => user._id === submission.studentId);
+    return result.filename;
+  };
+
   const renderGradeItem = (user, index) => {
+    const submissionFileName = renderSubmission(user);
     return (
       <li className="enroll-course-container" key={index}>
         <div className="enroll-course-name">
           {user.firstName} {user.lastName}
         </div>
+        <span>Submission: {submissionFileName}</span>
         <label>
           <span className="gradeSpan">Grade:</span>
           <input
