@@ -34,9 +34,11 @@ function GradeAssignment(props) {
     })();
   }, []);
 
-  const updateGrade = async (studentId, grade, idx) => {
+  const updateGrade = async (studentId, grade, idx, existingGrade) => {
     if (!grade || grade.trim() === '' || parseInt(grade) < 0 || parseInt(grade) > 100) {
       props.notify('Please enter valid grade!');
+    } else if (existingGrade.toString() === grade) {
+      props.notify('Please modify grade to update!');
     } else {
       await axios
         .patch(`${props.env?.apiUrl}/assignments/grades/${props.assignmentId}`, {
@@ -96,7 +98,7 @@ function GradeAssignment(props) {
         </button>
         <button
           className="enroll-button"
-          onClick={async () => await updateGrade(user && user._id, grade[index], index)}
+          onClick={async () => await updateGrade(user && user._id, grade[index], index, user.grade)}
         >
           Update
         </button>
