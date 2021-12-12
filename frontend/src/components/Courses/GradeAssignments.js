@@ -35,26 +35,33 @@ function GradeAssignment(props) {
   }, []);
 
   const updateGrade = async (studentId, grade) => {
-    setEditGrade(false);
-    await axios
-      .patch(`${props.env?.apiUrl}/assignments/grades/${props.assignmentId}`, {
-        teacherId: props.teacherId,
-        studentId: studentId,
-        grade: grade,
-        courseId: props.courseId,
-      })
-      .then((response) => {
-        (async () => {
-          await fetchAllGrades();
-          await props.fetchGradeMetrics();
-        })();
-        console.log(response);
-        props.notifySuccess('Grade updated!');
-      })
-      .catch((error) => {
-        console.log(error && error.message);
-        props.notify('Unable to update grade!');
-      });
+    try {
+      if(parseInt(grade) < 0 || parseInt(grade) > 100) throw new Error('Grade must be between 0 and 100!');
+      
+      setEditGrade(false);
+      await axios
+        .patch(`${props.env?.apiUrl}/assignments/grades/${props.assignmentId}`, {
+          teacherId: props.teacherId,
+          studentId: studentId,
+          grade: grade,
+          courseId: props.courseId,
+        })
+        .then((response) => {
+          (async () => {
+            await fetchAllGrades();
+            await props.fetchGradeMetrics();
+          })();
+          console.log(response);
+          props.notifySuccess('Grade updated!');
+        })
+        .catch((error) => {
+          console.log(error && error.message);
+          props.notify('Unable to update grade!');
+        });
+
+    } catch(e) {
+      props.notify(e.toString() || 'Invalid grade value. Try again!');
+    }    
   };
 
   const renderGradeItem = (user, index) => {

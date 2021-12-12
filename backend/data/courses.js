@@ -356,7 +356,8 @@ async function getAllCourses() {
   return result;
 }
 
-async function getAllSubmissions(courseId, assignmentId)  {  
+async function getAllSubmissions(assignmentId)  {  
+  error.str(assignmentId);
   const parsedAssignmentId = error.validId(assignmentId);
 
   let result = [];
@@ -372,7 +373,7 @@ async function getAllSubmissions(courseId, assignmentId)  {
     { $unwind: '$classes.grades' },
     { $unwind: '$classes.grades' },
     { $match: { 'classes.grades._id': parsedAssignmentId } },
-    { $project: { _id: 0, firstName: 1, lastName: 1, submissionFile: '$classes.grades.submissionFile' } },
+    { $project: { _id: 1, firstName: 1, lastName: 1, submissionFile: '$classes.grades.submissionFile' } },
   ])
   .toArray();
 
@@ -384,7 +385,7 @@ async function getAllSubmissions(courseId, assignmentId)  {
     filename = filename.slice(ind+1);
 
     let fullName = arr[i].firstName + " " + arr[i].lastName;
-    let info = {studentName: fullName, filename: filename};
+    let info = {studentId: arr[i]._id, studentName: fullName, filename: filename};
     result.push(info);
   }
 
