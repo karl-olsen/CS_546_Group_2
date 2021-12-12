@@ -48,7 +48,8 @@ async function addTeacher(courseId, teacherId) {
   if (!tempCourse) throw 'Course with that ID is not in database!';
 
   //if the teacher already teaches the respective course, throw an error
-  if (tempCourse.teachers.some((e) => e.toString() === teacherId)) throw 'Teacher is already assigned to that course!';
+  if (tempCourse.teachers.some((e) => e.toString() === teacherId))
+    throw new Error('Teacher is already assigned to that course!');
 
   //push the provided teacherId to the tempCourse's teachers array
   tempCourse.teachers.push(parsedTeacherId);
@@ -57,7 +58,7 @@ async function addTeacher(courseId, teacherId) {
   const updatedInfo = await coursesCollection.updateOne({ _id: parsedCourseId }, { $set: tempCourse });
 
   //check that the update succeeded
-  if (updatedInfo.modifiedCount === 0) throw 'Failed to add teacher!';
+  if (updatedInfo.modifiedCount === 0) throw new Error('Failed to add teacher!');
 
   //upon successful add, return the name of the course for output
   return tempCourse.name;
@@ -116,7 +117,8 @@ async function removeStudent(courseId, studentId) {
   if (!tempCourse) throw 'Course with that ID is not in database!';
 
   //if the student isn't enrolled in the course they're dropping, throw an error
-  if (!tempCourse.students.some((e) => e.toString() === studentId)) throw new Error('Cannot drop student from a course they are not enrolled in!');
+  if (!tempCourse.students.some((e) => e.toString() === studentId))
+    throw new Error('Cannot drop student from a course they are not enrolled in!');
 
   //find the course in the user's "classes" array
   for (let student of tempCourse.students) {

@@ -4,9 +4,12 @@ import userIcon from '../../assets/Login/user.svg';
 import { useState } from 'react';
 import './Create.css';
 import env from '../../env';
+import { toast } from 'react-toastify';
 
 function Create() {
   const user = JSON.parse(localStorage.user);
+  const notify = (message) => toast.error(message);
+  const success = (message) => toast.success(message);
   const [courseName, setCourseName] = useState('');
   const [isSuccessful, setIsSuccessful] = useState(false);
 
@@ -14,11 +17,19 @@ function Create() {
     e = e || window.event;
     e.preventDefault();
 
-    await axios.post(`${env?.apiUrl}/courses`, {
-      courseName: courseName,
-      userId: user.id,
-    });
-    setIsSuccessful(true);
+    try {
+      await axios.post(`${env?.apiUrl}/courses`, {
+        courseName: courseName,
+        userId: user.id,
+      });
+      setIsSuccessful(true);
+      success('New course created!');
+    } catch (e) {
+      notify(e?.response?.data?.error || 'Failed to create course');
+    }
+
+    setCourseName('');
+    e.target.reset();
   }
 
   return (

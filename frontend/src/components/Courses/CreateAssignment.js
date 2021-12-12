@@ -49,14 +49,10 @@ function CreateAssignment() {
           setIsSuccessful(true);
           notifySuccess('Assignment created successfully!');
 
-          //Using client-side validateInput made this section unnecessary. Leaving it in, commented out just in case we decide to use this method instead
-          // .then((response) => {
-          //   setIsSuccessful(true);
-          //   notifySuccess('Assignment created successfully!');
-          // })
-          // .catch((error) => {
-          //   notifyError(error.response.data || 'Unable to create the assignment. Try again!');
-          // });
+          //reset the fields on the page
+          setAssignmentName('');
+          setAssignmentType('');
+          setAssignmentDesc('');
 
         } catch(e) {
           notifyError(e.toString() || 'Unable to create the assignment. Try again!');

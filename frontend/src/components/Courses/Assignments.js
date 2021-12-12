@@ -59,7 +59,7 @@ function Assignments() {
             ))}
           </div>
         ) : (
-          <div className="assignment-description bold assignments-align-centre">
+          <div className="assignment-description bold assignments-align-centre text-white">
             Currently there are no assignments, relax!
           </div>
         )}

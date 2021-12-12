@@ -19,7 +19,6 @@ function Assignments() {
   const [grade, setGrade] = useState('');
   const [metrics, setMetrics] = useState([]);
   const [isError, setIsError] = useState(false);
-
   // if we want to tell user where they came from
 
   async function handleSubmit(e) {
@@ -39,9 +38,9 @@ function Assignments() {
     data.append('assignmentId', assignmentId);
     data.append('file', selectedFile);
     try {
-      await axios.post(`${env?.apiUrl}/submit`, data).then((response) => {
-        notifySuccess('Assignment submitted');
-      });
+      const e = await axios.post(`${env?.apiUrl}/submit`, data);
+      console.log(e);
+      notifySuccess('Assignment successfully uploaded');
     } catch (e) {
       notify(e?.response?.data?.error || 'Unable to upload file');
     }
@@ -86,10 +85,11 @@ function Assignments() {
       {user && user.role !== 'teacher' ? (
         <div className="courses-container">
           <div className="courses-heading-container">
-            <h1 className="courses-header">'View and Submit Your Assigment!'</h1>
+            <h1 className="courses-header">View and Submit Your Assignment!</h1>
           </div>
-          {metrics && (
+          {metrics && metrics?.average !== -1 && (
             <div className="assignment-container">
+              <h2>Grade Metrics</h2>
               <div className="courses-assignment-container">
                 <div className="assignment-grade-min bold">Minimum</div>
                 <div className="assignment-grade-max bold">Maximum</div>
