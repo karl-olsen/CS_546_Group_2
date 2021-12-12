@@ -33,7 +33,7 @@ router.post('/', async (req, res) => {
     };
     const secret = env.secret;
     const token = jwt.sign(payload, secret, {
-      expiresIn: '1h',
+      expiresIn: '23h',
     });
 
     res.cookie('token', token, { httpOnly: true });
