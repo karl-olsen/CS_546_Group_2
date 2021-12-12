@@ -580,6 +580,10 @@ async function fetchGradeMetrics(assignmentId) {
   if (grades.length === 0) throw new Error('No assignment found with the given id');
 
   grades = grades.filter((value) => Object.keys(value).length !== 0);
+  grades = grades.map((grade) => {
+    if (grade.grade !== -1) return grade;
+  });
+  grades = grades.filter(Boolean);
   if (grades.length === 0) throw new Error('Assignments are yet to be graded');
 
   let sum = 0;
