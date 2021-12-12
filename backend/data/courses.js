@@ -1,6 +1,7 @@
 const mongoCollections = require('../config/mongoCollections');
 const courses = mongoCollections.courses;
 const users = mongoCollections.users;
+const assignmentsFiles = mongoCollections.assignmentsFiles;
 const error = require('../error');
 let { ObjectId } = require('mongodb');
 
@@ -9,9 +10,6 @@ async function createCourse(courseName, teacherId) {
 
   error.str(courseName);
   error.str(teacherId);
-  // error.arr(teacherIds, true);
-
-  // const parsedTeacherIds = teacherIds.map((id) => error.validId(id));
   const parsedTeacherId = error.validId(teacherId);
 
   const newCourse = {
@@ -358,6 +356,42 @@ async function getAllCourses() {
   return result;
 }
 
+async function getAllSubmissions(courseId, assignmentId)  {  
+  const parsedAssignmentId = error.validId(assignmentId);
+
+  let result = [];
+
+  const usersCollection = await users();
+  const submissionsCollection = await assignmentsFiles();
+
+
+  let arr = await usersCollection.aggregate([
+    { $match: { classes: { $elemMatch: { grades: { $elemMatch: { _id: parsedAssignmentId } } } } } },
+    { $unwind: '$classes' },
+    { $unwind: '$classes' },
+    { $unwind: '$classes.grades' },
+    { $unwind: '$classes.grades' },
+    { $match: { 'classes.grades._id': parsedAssignmentId } },
+    { $project: { _id: 0, firstName: 1, lastName: 1, submissionFile: '$classes.grades.submissionFile' } },
+  ])
+  .toArray();
+
+  //calling in separate for-loop because Node doesn't seem to like nested async functions
+  for(let i = 0; i < arr.length; i++) {
+    let submission = await submissionsCollection.findOne({_id: arr[i].submissionFile});
+    let filename = submission.filename;
+    let ind = filename.indexOf('-');
+    filename = filename.slice(ind+1);
+
+    let fullName = arr[i].firstName + " " + arr[i].lastName;
+    let info = {studentName: fullName, filename: filename};
+    result.push(info);
+  }
+
+  //NOTE: in the situation of no submissions for an assignment, this will return an empty array
+  return result;
+}
+
 module.exports = {
   getCourse,
   createCourse,
@@ -369,4 +403,5 @@ module.exports = {
   removeAssignment,
   editAssignmentDescription,
   getAllCourses,
+  getAllSubmissions,
 };

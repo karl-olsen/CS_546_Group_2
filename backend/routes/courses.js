@@ -53,7 +53,7 @@ router.get('/:id', auth, async (req, res) => {
     return;
   } catch (e) {
     console.log(e);
-    res.sendStatus(400).json({ error: e.message });
+    res.status(400).json({ error: e.message });
   }
 });
 
