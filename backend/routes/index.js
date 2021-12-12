@@ -8,10 +8,6 @@ const submitRoutes = require('./submit');
 const assignmentsRoute = require('./assignments');
 
 const constructorMethod = (app) => {
-  app.get('/', (req, res) => {
-    res.status(200).json({ test: 'hello world' });
-  });
-
   app.use('/login', loginRoute);
   app.use('/courses', courseRoute);
   app.use('/enroll', enrollRoute);
