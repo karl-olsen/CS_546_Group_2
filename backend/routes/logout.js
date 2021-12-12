@@ -4,10 +4,10 @@ const auth = require('../middleware/auth');
 
 router.get('/', auth, async (req, res) => {
   try {
-    const anHourAgo = new Date();
-    anHourAgo.setHours(anHourAgo.getHours() - 1);
+    const hours = new Date();
+    hours.setHours(hours.getHours() - 23);
 
-    res.cookie('token', '', { expires: anHourAgo });
+    res.cookie('token', '', { expires: hours });
     res.clearCookie('token');
 
     res.status(200).json({ status: true });

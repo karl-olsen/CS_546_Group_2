@@ -5,8 +5,8 @@ import './Enroll.css';
 
 function GradeAssignment(props) {
   const [grades, setGrades] = useState([]);
-  const [grade, updateGradeState] = useState('');
-  const [editGrade, setEditGrade] = useState(false);
+  const [grade, updateGradeState] = useState({});
+  const [editGrade, setEditGrade] = useState({});
   const [loading, setLoading] = useState(true);
 
   const fetchAllGrades = async () => {
@@ -34,27 +34,45 @@ function GradeAssignment(props) {
     })();
   }, []);
 
-  const updateGrade = async (studentId, grade) => {
-    setEditGrade(false);
-    await axios
-      .patch(`${props.env?.apiUrl}/assignments/grades/${props.assignmentId}`, {
-        teacherId: props.teacherId,
-        studentId: studentId,
-        grade: grade,
-        courseId: props.courseId,
-      })
-      .then((response) => {
-        (async () => {
-          await fetchAllGrades();
-          await props.fetchGradeMetrics();
-        })();
-        console.log(response);
-        props.notifySuccess('Grade updated!');
-      })
-      .catch((error) => {
-        console.log(error && error.message);
-        props.notify('Unable to update grade!');
-      });
+  const updateGrade = async (studentId, grade, idx) => {
+    if (!grade || grade.trim() === '' || parseInt(grade) < 0 || parseInt(grade) > 100) {
+      props.notify('Please enter valid grade!');
+    } else {
+      await axios
+        .patch(`${props.env?.apiUrl}/assignments/grades/${props.assignmentId}`, {
+          teacherId: props.teacherId,
+          studentId: studentId,
+          grade: grade,
+          courseId: props.courseId,
+        })
+        .then((response) => {
+          setInputEnable(idx, true);
+          (async () => {
+            await fetchAllGrades();
+            await props.fetchGradeMetrics();
+          })();
+          console.log(response);
+          props.notifySuccess('Grade updated!');
+        })
+        .catch((error) => {
+          console.log(error && error.message);
+          props.notify('Unable to update grade!');
+        });
+    }
+  };
+
+  const setInputEnable = (idx, bool) => {
+    let inputs = Object.assign({}, editGrade);
+    inputs[idx] = bool;
+    setEditGrade(inputs);
+  };
+
+  const setInputValue = (e, idx) => {
+    e.preventDefault();
+    const { name, value } = e.target;
+    let values = Object.assign({}, grade);
+    values[idx] = value;
+    updateGradeState(values);
   };
 
   const renderGradeItem = (user, index) => {
@@ -66,16 +84,20 @@ function GradeAssignment(props) {
         <label>
           <span className="gradeSpan">Grade:</span>
           <input
+            name={index}
             className="input-grade-field"
-            disabled={!editGrade}
-            value={editGrade ? grade : user.grade === -1 ? 'N/A' : user.grade}
-            onChange={(e) => updateGradeState(e.target.value)}
+            disabled={editGrade[index] === undefined ? true : editGrade[index]}
+            value={editGrade[index] !== undefined ? grade[index] : user.grade === -1 ? 'N/A' : user.grade}
+            onChange={(e) => setInputValue(e, index)}
           />
         </label>
-        <button className="enroll-button" onClick={() => setEditGrade(true)}>
+        <button className="enroll-button" onClick={() => setInputEnable(index, false)}>
           Edit
         </button>
-        <button className="enroll-button" onClick={async () => await updateGrade(user && user._id, grade)}>
+        <button
+          className="enroll-button"
+          onClick={async () => await updateGrade(user && user._id, grade[index], index)}
+        >
           Update
         </button>
       </li>
