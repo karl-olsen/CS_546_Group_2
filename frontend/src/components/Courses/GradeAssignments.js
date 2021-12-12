@@ -150,9 +150,9 @@ function GradeAssignment(props) {
                 <div>Average</div>
               </div>
               <div className="courses-assignment-container" style={{ justifyContent: 'space-evenly' }}>
-                <div>{props.metrics.min !== -1 ? props.metrics.min : 'N/A'}</div>
-                <div>{props.metrics.max !== -1 ? props.metrics.max : 'N/A'}</div>
-                <div>{props.metrics.average !== -1 ? props.metrics.average : 'N/A'}</div>
+                <div>{props.metrics?.min !== -1 ? props.metrics?.min : 'N/A'}</div>
+                <div>{props.metrics?.max !== -1 ? props.metrics?.max : 'N/A'}</div>
+                <div>{props.metrics?.average !== -1 ? props.metrics?.average : 'N/A'}</div>
               </div>
             </div>
             <h2>Student Grades</h2>
