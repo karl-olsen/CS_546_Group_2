@@ -336,7 +336,7 @@ async function setOverallGrade(studentId, courseId) {
         count += 1;
       }
     }
-    if (count > 0) overallGrade = Math.round((sum / count) * 1e2) / 1e2;
+    if (count > 0) overallGrade = (Math.round((sum / (count * 100)) * 1e2) / 1e2) * 100;
   }
 
   if (classObj.overallGrade != overallGrade) {
@@ -545,7 +545,7 @@ async function fetchAllGrades(assignmentId) {
       { $unwind: '$classes.grades' },
       { $unwind: '$classes.grades' },
       { $match: { 'classes.grades._id': parsedAssignmentId } },
-      { $project: { _id: 0, firstName: 1, lastName: 1, grade: '$classes.grades.grade' } },
+      { $project: { _id: 1, firstName: 1, lastName: 1, grade: '$classes.grades.grade' } },
     ])
     .toArray();
   if (grades.length === 0) throw new Error('No grades found for the assignment');

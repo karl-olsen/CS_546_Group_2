@@ -63,7 +63,7 @@ router.post('/:id', auth, async (req, res) => {
     res.status(200).json(newCourse);
     return;
   } catch (e) {
-    console.log( e);
+    console.log(e);
     return res.status(400).json(e.toString());
   }
 });
@@ -165,7 +165,7 @@ router.get('/grades/all/:assignmentId', auth, async (req, res) => {
     return;
   } catch (error) {
     if (error.message === 'No grades found for the assignment') {
-      res.status(404).json({ error: error.message });
+      res.status(404).send({ error: error.message });
     } else {
       res.status(500).json({ error: error.message });
     }
@@ -174,7 +174,7 @@ router.get('/grades/all/:assignmentId', auth, async (req, res) => {
 
 /**
  * Set grade for assignment
- * Route: PUT
+ * Route: PATCH
  * Params: assignmentId
  * Body Params: teacherId, studentId, grade, courseId
  */
