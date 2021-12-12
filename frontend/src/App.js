@@ -15,6 +15,7 @@ import 'react-toastify/dist/ReactToastify.min.css';
 import Logout from './components/Logout/Logout';
 import Signup from './components/Signup/Signup';
 import Enroll from './components/Courses/Enroll';
+import AddTeacher from './components/Courses/AddTeacher';
 import Forbidden from './components/Error/Forbidden';
 import Error404 from './components/Error/Error404';
 
@@ -112,6 +113,16 @@ function App() {
             element={
               <exportedObj.RequireAuth>
                 <Assignment />
+              </exportedObj.RequireAuth>
+            }
+          />
+          <Route
+            path="/courses/AddTeacher"
+            element={
+              <exportedObj.RequireAuth>
+                <exportedObj.RequireTeacher>
+                  <AddTeacher />
+                </exportedObj.RequireTeacher>
               </exportedObj.RequireAuth>
             }
           />

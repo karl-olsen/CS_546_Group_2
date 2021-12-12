@@ -14,6 +14,7 @@ function Navbar() {
   let [isEnroll, setEnroll] = useState(false);
   let [isCreateCourse, setCreateCourse] = useState(false);
   let [isCreateAssignment, setCreateAssignment] = useState(false);
+  let [isJoinCourse, setJoinCourse] = useState(false);
   const { id } = useParams();
   const user = localStorage.user && JSON.parse(localStorage.user);
 
@@ -24,9 +25,11 @@ function Navbar() {
       if (location.pathname === '/' || location.pathname === '/dashboard') {
         setDashboard(false);
         setCreateCourse(true);
+        setJoinCourse(true);
       } else {
         setDashboard(true);
         setCreateCourse(false);
+        setJoinCourse(false);
       }
       //enroll
       if (location.pathname === '/courses/enroll') {
@@ -71,6 +74,11 @@ function Navbar() {
     navigate(`/courses/${id}/assignments/create`);
   };
 
+  const navJoinCourse = (e) => {
+    e.preventDefault();
+    navigate('/courses/AddTeacher');
+  };
+
   return (
     <nav className="nav-container">
       <div className="nav-logo-container">
@@ -96,6 +104,16 @@ function Navbar() {
             }}
           >
             Enroll
+          </button>
+        )}
+        {user && user.role === 'teacher' && isJoinCourse && (
+          <button
+            className="nav-button"
+            onClick={(e) => {
+              navJoinCourse(e);
+            }}
+          >
+            Join Course
           </button>
         )}
         {user && user.role === 'teacher' && isCreateCourse && (
