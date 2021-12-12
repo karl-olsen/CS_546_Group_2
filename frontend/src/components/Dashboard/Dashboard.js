@@ -52,7 +52,11 @@ function Dashboard() {
       <div className="dashboard-subHeader">
         <h1>Dashboard</h1>
       </div>
-      <div className="grid-container">{gridCourses}</div>
+      {dashboardData.length > 0 ? (
+        <div className="grid-container">{gridCourses}</div>
+      ) : (
+        <h2>To view courses, please enroll in a course</h2>
+      )}
       {error ? <div>{errorMsg}</div> : null}
       {loading && <Spinner />}
     </div>
