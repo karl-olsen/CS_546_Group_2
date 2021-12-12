@@ -20,7 +20,7 @@ You can find your backend at http://localhost:3001.
 
 ### Frontend
 
-To only start the frontend:
+To only start the frontend with hot-reloading:
 
 ```sh
 npm run dev
@@ -30,7 +30,7 @@ You can find your frontend at http://localhost:3000.
 
 ### Backend
 
-To only start the backend:
+To only start the backend with hot-reloading:
 
 ```sh
 npm run dev

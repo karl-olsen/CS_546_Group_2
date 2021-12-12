@@ -8,6 +8,7 @@ const userData = require('../data/users');
 const mongoCollections = require('../config/mongoCollections');
 const users = mongoCollections.users;
 let { ObjectId } = require('mongodb');
+const xss = require('xss');
 
 async function getRole(userId) {
   const usersCollection = await users();
@@ -20,7 +21,11 @@ async function getRole(userId) {
 }
 
 router.post('/', auth, async (req, res) => {
-  const { userId, courseId } = req.body;
+  const sanitizedBody = {};
+  Object.keys(req.body).forEach((key) => {
+    sanitizedBody[key] = xss(req.body[key]);
+  });
+  const { userId, courseId } = sanitizedBody;
 
   let role = await getRole(userId);
   let courseName = '';
