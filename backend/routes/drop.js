@@ -8,6 +8,7 @@ const userData = require('../data/users');
 const mongoCollections = require('../config/mongoCollections');
 const users = mongoCollections.users;
 let { ObjectId } = require('mongodb');
+const xss = require('xss');
 
 async function getRole(userId) {
   const usersCollection = await users();

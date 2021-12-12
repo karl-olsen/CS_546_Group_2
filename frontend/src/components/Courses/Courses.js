@@ -51,6 +51,7 @@ function Courses() {
     try {
       await axios.post(`${env?.apiUrl}/drop`, data);
       setIsSuccessful(true);
+      navigate('/dashboard');
     } catch (error) {
       setIsError(true);
       console.log(error);
