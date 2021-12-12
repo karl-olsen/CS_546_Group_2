@@ -36,7 +36,7 @@ function Dashboard() {
     return (
       <a className="course-element-container" key={index} href={`/courses/${course._id.toString()}`}>
         <div className={`course-grade-container ${gradientClass}`}>
-          {user && user.role !== 'teacher' && <div className="course-grade-circle">{course.grade}</div>}
+          {user && user.role !== 'teacher' && <div className="course-grade-circle">{course.grade}%</div>}
         </div>
         <div className="course-element">{course.name}</div>
       </a>
