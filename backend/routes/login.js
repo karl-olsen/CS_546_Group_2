@@ -4,15 +4,18 @@ const express = require('express');
 const router = express.Router();
 const { checkUser, getUser } = require('../data/users');
 const error = require('../error');
+const xss = require('xss');
 
 router.post('/', async (req, res) => {
   try {
     const userBody = req.body;
+    const parsedEmail = xss(userBody?.email);
+    const parsedPassword = xss(userBody?.password);
     let foundUserIdObj = null;
     try {
-      error.str(userBody?.email);
-      error.str(userBody?.password);
-      foundUserIdObj = await checkUser(userBody?.email, userBody?.password);
+      error.str(parsedEmail);
+      error.str(parsedPassword);
+      foundUserIdObj = await checkUser(parsedEmail, parsedPassword);
     } catch (e) {
       return res.status(400).json({ error: e.message });
     }
@@ -21,23 +24,22 @@ router.post('/', async (req, res) => {
     }
     const user = await getUser(foundUserIdObj.userId);
     const { email, userId, role, firstName, lastName } = user;
-    const payload = { 
+    const payload = {
       email,
       userId,
-      role, 
-      firstName, 
+      role,
+      firstName,
       lastName,
     };
     const secret = env.secret;
     const token = jwt.sign(payload, secret, {
-      expiresIn: '1h',
+      expiresIn: '23h',
     });
-    
+
     res.cookie('token', token, { httpOnly: true });
 
     const response = {
       authenticated: true,
-      email: user?.email,
       firstName: user?.firstName,
       lastName: user?.lastName,
       role: user?.role,

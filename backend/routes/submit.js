@@ -3,6 +3,7 @@ const router = express.Router();
 const { submitAssignment, deleteFileInstanceById } = require('../data/users');
 const auth = require('../middleware/auth');
 const upload = require('../middleware/upload');
+const xss = require('xss');
 
 router.post('/', auth, async (req, res) => {
   try {
@@ -12,7 +13,7 @@ router.post('/', auth, async (req, res) => {
     const userBody = req.body;
 
     // Saves the file id to the student's assignmentsId in mongo (validates student info)
-    const state = await submitAssignment(userBody?.studentId, userBody?.assignmentId, fileInfo?.id);
+    const state = await submitAssignment(xss(userBody?.studentId), xss(userBody?.assignmentId), fileInfo?.id);
 
     const uploadedRes = {
       modifiedCount: state.modifiedCount,

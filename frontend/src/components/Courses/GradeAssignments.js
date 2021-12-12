@@ -5,8 +5,8 @@ import './Enroll.css';
 
 function GradeAssignment(props) {
   const [grades, setGrades] = useState([]);
-  const [grade, updateGradeState] = useState('');
-  const [editGrade, setEditGrade] = useState(false);
+  const [grade, updateGradeState] = useState({});
+  const [editGrade, setEditGrade] = useState({});
   const [loading, setLoading] = useState(true);
 
   const fetchAllGrades = async () => {
@@ -34,11 +34,18 @@ function GradeAssignment(props) {
     })();
   }, []);
 
+<<<<<<< HEAD
   const updateGrade = async (studentId, grade) => {
     try {
       if(parseInt(grade) < 0 || parseInt(grade) > 100) throw new Error('Grade must be between 0 and 100!');
       
       setEditGrade(false);
+=======
+  const updateGrade = async (studentId, grade, idx) => {
+    if (!grade || grade.trim() === '' || parseInt(grade) < 0 || parseInt(grade) > 100) {
+      props.notify('Please enter valid grade!');
+    } else {
+>>>>>>> e6cedfd4b1d5d4164aab2a10be19fb49f9cef841
       await axios
         .patch(`${props.env?.apiUrl}/assignments/grades/${props.assignmentId}`, {
           teacherId: props.teacherId,
@@ -47,6 +54,10 @@ function GradeAssignment(props) {
           courseId: props.courseId,
         })
         .then((response) => {
+<<<<<<< HEAD
+=======
+          setInputEnable(idx, true);
+>>>>>>> e6cedfd4b1d5d4164aab2a10be19fb49f9cef841
           (async () => {
             await fetchAllGrades();
             await props.fetchGradeMetrics();
@@ -58,10 +69,28 @@ function GradeAssignment(props) {
           console.log(error && error.message);
           props.notify('Unable to update grade!');
         });
+<<<<<<< HEAD
 
     } catch(e) {
       props.notify(e.toString() || 'Invalid grade value. Try again!');
     }    
+=======
+    }
+  };
+
+  const setInputEnable = (idx, bool) => {
+    let inputs = Object.assign({}, editGrade);
+    inputs[idx] = bool;
+    setEditGrade(inputs);
+  };
+
+  const setInputValue = (e, idx) => {
+    e.preventDefault();
+    const { name, value } = e.target;
+    let values = Object.assign({}, grade);
+    values[idx] = value;
+    updateGradeState(values);
+>>>>>>> e6cedfd4b1d5d4164aab2a10be19fb49f9cef841
   };
 
   const renderGradeItem = (user, index) => {
@@ -73,16 +102,20 @@ function GradeAssignment(props) {
         <label>
           <span className="gradeSpan">Grade:</span>
           <input
+            name={index}
             className="input-grade-field"
-            disabled={!editGrade}
-            value={editGrade ? grade : user.grade === -1 ? 'N/A' : user.grade}
-            onChange={(e) => updateGradeState(e.target.value)}
+            disabled={editGrade[index] === undefined ? true : editGrade[index]}
+            value={editGrade[index] !== undefined ? grade[index] : user.grade === -1 ? 'N/A' : user.grade}
+            onChange={(e) => setInputValue(e, index)}
           />
         </label>
-        <button className="enroll-button" onClick={() => setEditGrade(true)}>
+        <button className="enroll-button" onClick={() => setInputEnable(index, false)}>
           Edit
         </button>
-        <button className="enroll-button" onClick={async () => await updateGrade(user && user._id, grade)}>
+        <button
+          className="enroll-button"
+          onClick={async () => await updateGrade(user && user._id, grade[index], index)}
+        >
           Update
         </button>
       </li>
