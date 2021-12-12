@@ -3,6 +3,7 @@ const multer = require('multer');
 const { GridFsStorage } = require('multer-gridfs-storage');
 const { mongoConfig } = require('../config/settings.json');
 const error = require('../error');
+const xss = require('xss');
 
 const storage = new GridFsStorage({
   url: mongoConfig.serverUrl + mongoConfig.database,
@@ -10,10 +11,12 @@ const storage = new GridFsStorage({
 
   file: (req, file) => {
     const userBody = req.body;
-    error.str(userBody?.studentId);
-    error.validId(userBody?.studentId);
-    error.str(userBody?.assignmentId);
-    error.validId(userBody?.assignmentId);
+    const parsedStudentId = xss(userBody?.studentId);
+    const parsedAssignmentId = xss(userBody?.assignmentId);
+    error.str(parsedStudentId);
+    error.validId(parsedStudentId);
+    error.str(parsedAssignmentId);
+    error.validId(parsedAssignmentId);
 
     const match = ['application/pdf', 'image/png', 'image/jpeg'];
 
