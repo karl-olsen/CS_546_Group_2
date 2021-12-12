@@ -243,18 +243,16 @@ router.get('/grades/metrics/:assignmentId', auth, async (req, res) => {
   }
 });
 
-router.get('/submissions/:courseId/:assignmentId', auth, async (req, res) => {
+router.get('/submissions/:assignmentId', auth, async (req, res) => {
   const assignmentId = xss(req.params.assignmentId);
-  const courseId = xss(req.params.courseId);
   try {
     try {
       error.str(assignmentId);
-      error.str(courseId);
     } catch (e) {
       return res.status(400).json({ error: e.message });
     }
 
-    const response = await courseData.getAllSubmissions(courseId, assignmentId);
+    const response = await courseData.getAllSubmissions(assignmentId);
 
     return res.status(200).json(response);
   } catch (e) {

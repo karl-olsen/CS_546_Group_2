@@ -33,9 +33,7 @@ function GradeAssignment(props) {
 
   const fetchSubmissions = async () => {
     try {
-      const submissions = await axios.get(
-        `${env?.apiUrl}/assignments/submissions/${props.courseId}/${props.assignmentId}`
-      );
+      const submissions = await axios.get(`${env?.apiUrl}/assignments/submissions/${props.assignmentId}`);
       console.log(submissions);
       setSubmissions(submissions.data);
     } catch (e) {
@@ -45,23 +43,15 @@ function GradeAssignment(props) {
 
   useEffect(() => {
     (async () => {
-      await fetchAllGrades();
       await fetchSubmissions();
+      await fetchAllGrades();
     })();
   }, []);
 
-<<<<<<< HEAD
-  const updateGrade = async (studentId, grade) => {
-    try {
-      if(parseInt(grade) < 0 || parseInt(grade) > 100) throw new Error('Grade must be between 0 and 100!');
-      
-      setEditGrade(false);
-=======
   const updateGrade = async (studentId, grade, idx) => {
     if (!grade || grade.trim() === '' || parseInt(grade) < 0 || parseInt(grade) > 100) {
       props.notify('Please enter valid grade!');
     } else {
->>>>>>> e6cedfd4b1d5d4164aab2a10be19fb49f9cef841
       await axios
         .patch(`${props.env?.apiUrl}/assignments/grades/${props.assignmentId}`, {
           teacherId: props.teacherId,
@@ -70,10 +60,7 @@ function GradeAssignment(props) {
           courseId: props.courseId,
         })
         .then((response) => {
-<<<<<<< HEAD
-=======
           setInputEnable(idx, true);
->>>>>>> e6cedfd4b1d5d4164aab2a10be19fb49f9cef841
           (async () => {
             await fetchAllGrades();
             await props.fetchGradeMetrics();
@@ -85,12 +72,6 @@ function GradeAssignment(props) {
           console.log(error && error.message);
           props.notify('Unable to update grade!');
         });
-<<<<<<< HEAD
-
-    } catch(e) {
-      props.notify(e.toString() || 'Invalid grade value. Try again!');
-    }    
-=======
     }
   };
 
@@ -106,11 +87,10 @@ function GradeAssignment(props) {
     let values = Object.assign({}, grade);
     values[idx] = value;
     updateGradeState(values);
->>>>>>> e6cedfd4b1d5d4164aab2a10be19fb49f9cef841
   };
 
   const renderSubmission = (user) => {
-    const result = submissions.find((submission) => user._id === submission.id);
+    const result = submissions.find((submission) => user._id === submission.studentId);
     return result.filename;
   };
 
