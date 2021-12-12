@@ -6,7 +6,21 @@ Ez-el is a lightweight course management solution for students and professors! T
 
 ## Quick Start
 
-### Frontend and Backend
+### First, install Node packages
+
+Frontend:
+```sh
+cd frontend
+npm install
+```
+
+Backend:
+```sh
+cd backend
+npm install
+```
+
+### Start Frontend and Backend **Concurrently**
 
 To start both frontend and backend concurrently:
 
@@ -18,7 +32,7 @@ npm start
 You can find your frontend at http://localhost:3000.
 You can find your backend at http://localhost:3001.
 
-### Frontend
+### Frontend Only
 
 To only start the frontend with hot-reloading:
 
@@ -28,7 +42,7 @@ npm run dev
 
 You can find your frontend at http://localhost:3000.
 
-### Backend
+### Backend Backend
 
 To only start the backend with hot-reloading:
 
