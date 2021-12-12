@@ -20,7 +20,11 @@ async function getRole(userId) {
 }
 
 router.post('/', auth, async (req, res) => {
-  const { userId, courseId } = req.body;
+  const sanitizedBody = {};
+  Object.keys(req.body).forEach((key) => {
+    sanitizedBody[key] = xss(req.body[key]);
+  });
+  const { userId, courseId } = sanitizedBody;
 
   try {
     let role = await getRole(userId);
