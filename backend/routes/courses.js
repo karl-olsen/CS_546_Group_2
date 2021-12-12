@@ -28,7 +28,7 @@ router.get('/all', auth, async (req, res) => {
     return;
   } catch (e) {
     console.log(e);
-    res.sendStatus(400);
+    res.status(400).json({ error: e.message });
   }
 });
 
@@ -40,7 +40,7 @@ router.get('/single/:id', auth, async (req, res) => {
     return;
   } catch (e) {
     console.log(e);
-    res.sendStatus(400);
+    res.status(400).json({ error: e.message });
   }
 });
 
@@ -53,13 +53,12 @@ router.get('/:id', auth, async (req, res) => {
     return;
   } catch (e) {
     console.log(e);
-    res.sendStatus(400);
+    res.sendStatus(400).json({ error: e.message });
   }
 });
 
 //Route to create new course when given a Course Name and a Teacher ID
 router.post('/', auth, async (req, res) => {
-
   const { userId, courseName } = req.body;
 
   let role = await getRole(userId);
@@ -81,8 +80,7 @@ router.post('/', auth, async (req, res) => {
 
     return;
   } catch (e) {
-    console.log(e);
-    res.sendStatus(400);
+    res.status(400).json({ error: e.message });
   }
 });
 
@@ -100,8 +98,7 @@ router.patch('/', auth, async (req, res) => {
 
     res.status(200).json({ added: true });
   } catch (e) {
-    console.log(e);
-    res.sendStatus(400);
+    res.status(400).json({ error: e.message });
   }
 });
 

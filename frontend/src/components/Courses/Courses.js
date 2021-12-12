@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import './Create.css';
 import './Courses.css';
 import env from '../../env';
+import { useNavigate } from 'react-router-dom';
 
 function Courses() {
   const { id } = useParams();
@@ -16,7 +17,7 @@ function Courses() {
   const [assignments, setAssignments] = useState([]);
   const [isSuccessful, setIsSuccessful] = useState(false);
   const [isError, setIsError] = useState(false);
-
+  let navigate = useNavigate();
   // if we want to tell user where they came from
   let from = location.state?.from?.pathname || '/';
 
@@ -101,13 +102,14 @@ function Courses() {
           <>
             <div className="courses-heading-container">
               <h1 className="courses-header">
-                <a href={`http://localhost:3000/courses/${id}/assignments`}>View Your Assignments</a>
+                <button className="btn-primary" onClick={() => navigate(`/courses/${id}/assignments`)}>
+                  View Your Assignments
+                </button>
               </h1>
-              <h1 className="courses-header">Drop {courseName}</h1>
             </div>
             {isSuccessful && <p className="courses-subheader">Succesfully Dropped!</p>}
-            <button className="button" onClick={async () => await drop()}>
-              <p className="button-text">Drop!</p>
+            <button className="button btn-primary" onClick={async () => await drop()}>
+              <p className="button-text">Drop {courseName}!</p>
             </button>
           </>
         )}

@@ -215,14 +215,14 @@ router.get('/grades/metrics/:assignmentId', auth, async (req, res) => {
     try {
       error.str(assignmentId);
     } catch (e) {
-      return res.status(400).json({ erro: e.message });
+      return res.status(400).json({ error: e.message });
     }
 
     const response = await userData.fetchGradeMetrics(assignmentId);
     res.status(200).json(response);
     return;
-  } catch (error) {
-    res.status(500).json({ error: error.message });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
   }
 });
 
