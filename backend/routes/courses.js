@@ -59,7 +59,11 @@ router.get('/:id', auth, async (req, res) => {
 
 //Route to create new course when given a Course Name and a Teacher ID
 router.post('/', auth, async (req, res) => {
-  const { userId, courseName } = req.body;
+  const sanitizedBody = {};
+  Object.keys(req.body).forEach((key) => {
+    sanitizedBody[key] = xss(req.body[key]);
+  });
+  const { userId, courseName } = sanitizedBody;
 
   let role = await getRole(userId);
 
@@ -86,7 +90,11 @@ router.post('/', auth, async (req, res) => {
 
 //Route for a teacher to add themselves as a teacher for a given course
 router.patch('/', auth, async (req, res) => {
-  const { userId, courseId } = req.body;
+  const sanitizedBody = {};
+  Object.keys(req.body).forEach((key) => {
+    sanitizedBody[key] = xss(req.body[key]);
+  });
+  const { userId, courseId } = sanitizedBody;
 
   let role = await getRole(userId);
 

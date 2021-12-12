@@ -9,6 +9,7 @@ const mongoCollections = require('../config/mongoCollections');
 const users = mongoCollections.users;
 let { ObjectId } = require('mongodb');
 const error = require('../error');
+const xss = require('xss');
 
 async function getUserIDbyEmail(email) {
   const parsedEmail = email.toLowerCase().trim();
@@ -23,7 +24,7 @@ async function getUserIDbyEmail(email) {
 // route to GET all assignments for a specific course
 // :id is courseID
 router.get('/:id', auth, async (req, res) => {
-  const id = req.params.id;
+  const id = xss(req.params.id);
 
   const userId = await getUserIDbyEmail(req.email);
   const userIdStr = userId.toString();
@@ -46,8 +47,12 @@ router.get('/:id', auth, async (req, res) => {
 // route to POST a new assignment for a specific course
 // :id is courseID
 router.post('/:id', auth, async (req, res) => {
-  const id = req.params.id;
-  const { type, name, description } = req.body;
+  const id = xss(req.params.id);
+  const sanitizedBody = {};
+  Object.keys(req.body).forEach((key) => {
+    sanitizedBody[key] = xss(req.body[key]);
+  });
+  const { type, name, description } = sanitizedBody;
 
   const userId = await getUserIDbyEmail(req.email);
   const userIdStr = userId.toString();
@@ -71,8 +76,12 @@ router.post('/:id', auth, async (req, res) => {
 // route to patch an assignment description for a specific course
 // :id is assignment id
 router.patch('/:id', auth, async (req, res) => {
-  const id = req.params.id;
-  const { courseId, description } = req.body;
+  const id = xss(req.params.id);
+  const sanitizedBody = {};
+  Object.keys(req.body).forEach((key) => {
+    sanitizedBody[key] = xss(req.body[key]);
+  });
+  const { courseId, description } = sanitizedBody;
 
   const userId = await getUserIDbyEmail(req.email);
   const userIdStr = userId.toString();
@@ -96,7 +105,11 @@ router.patch('/:id', auth, async (req, res) => {
 // route to delete an assignment description for a specific course
 // :id is assignment id
 router.delete('/:id', auth, async (req, res) => {
-  const id = req.params.id;
+  const id = xss(req.params.id);
+  const sanitizedBody = {};
+  Object.keys(req.body).forEach((key) => {
+    sanitizedBody[key] = xss(req.body[key]);
+  });
   const { courseId } = req.body;
 
   const userId = await getUserIDbyEmail(req.email);
@@ -125,8 +138,8 @@ router.delete('/:id', auth, async (req, res) => {
  * Query: id
  */
 router.get('/grades/:assignmentId', auth, async (req, res) => {
-  const assignmentId = req.params.assignmentId;
-  const studentId = req.query.studentId;
+  const assignmentId = xss(req.params.assignmentId);
+  const studentId = xss(req.query.studentId);
   try {
     try {
       error.str(assignmentId);
@@ -153,7 +166,7 @@ router.get('/grades/:assignmentId', auth, async (req, res) => {
  * Params: assignmentId
  */
 router.get('/grades/all/:assignmentId', auth, async (req, res) => {
-  const assignmentId = req.params.assignmentId;
+  const assignmentId = xss(req.params.assignmentId);
   try {
     try {
       error.str(assignmentId);
@@ -179,8 +192,12 @@ router.get('/grades/all/:assignmentId', auth, async (req, res) => {
  * Body Params: teacherId, studentId, grade, courseId
  */
 router.patch('/grades/:assignmentId', auth, async (req, res) => {
-  const assignmentId = req.params.assignmentId;
-  const { teacherId, studentId, grade, courseId } = req.body;
+  const assignmentId = xss(req.params.assignmentId);
+  const sanitizedBody = {};
+  Object.keys(req.body).forEach((key) => {
+    sanitizedBody[key] = xss(req.body[key]);
+  });
+  const { teacherId, studentId, grade, courseId } = sanitizedBody;
   try {
     try {
       error.str(assignmentId);
@@ -210,7 +227,7 @@ router.patch('/grades/:assignmentId', auth, async (req, res) => {
  * Params: assignmentId
  */
 router.get('/grades/metrics/:assignmentId', auth, async (req, res) => {
-  const assignmentId = req.params.assignmentId;
+  const assignmentId = xss(req.params.assignmentId);
   try {
     try {
       error.str(assignmentId);
