@@ -7,8 +7,7 @@
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js",
-    "seed": "node ./tasks/seed.js",
-    "minSeed": "node ./tasks/seed.min.js"
+    "seed": "node ./tasks/seed.js"
   },
   "license": "ISC",
   "dependencies": {
