@@ -92,8 +92,8 @@ function GradeAssignment(props) {
   };
 
   const renderSubmission = (user) => {
-    const result = submissions.find((submission) => user._id === submission.studentId);
-    return result.filename;
+    const result = submissions?.find((submission) => user._id === submission?.studentId);
+    return result?.filename;
   };
 
   const renderGradeItem = (user, index) => {
